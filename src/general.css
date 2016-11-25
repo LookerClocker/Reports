@@ -1,0 +1,19 @@
+.title {
+    color: #fff;
+}
+
+html {
+    overflow-y: hidden;
+}
+
+.add-butt {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.total {
+    position:absolute;
+    top: 85px;
+    left: 21px;
+}
