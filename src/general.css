@@ -2,9 +2,9 @@
     color: #fff;
 }
 
-html {
-    overflow-y: hidden;
-}
+/*html {*/
+    /*overflow-y: hidden;*/
+/*}*/
 
 .add-butt {
     position: absolute;
@@ -16,4 +16,92 @@ html {
     position:absolute;
     top: 85px;
     left: 21px;
+}
+
+.img-preview {
+    width: 100%;
+    padding: 5% 0 3% 0;
+    border-radius: 20px;
+}
+
+@media screen and (max-width:750px){
+    .img-preview {
+        width: 40%;
+        padding: 5% 0 3% 0;
+        border-radius: 20px;
+    }
+
+}
+
+.custom-file-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+.custom-file-input::before {
+    content: 'Chose logo:';
+    text-align: left;
+}
+
+.dropdown-width {
+    min-width: 100%;
+    margin-bottom: 4%;
+}
+
+.logo-width {
+    width: 100%;
+}
+
+.logo-row {
+    margin: 10px 0 5% 0;
+}
+
+.edit-imag {
+    padding-top: 3%;
+    border-radius: 11px;
+}
+
+.title-margin {
+    margin-top: 8%;
+}
+
+.mr-24 {
+    margin-top: 24px;
+}
+
+.customer {
+    padding-left: 2.5%;
+}
+
+.dates {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align:center;
+    -ms-flex-align:center;
+    align-items:center
+}
+
+.main-padding {
+    padding-bottom: 5%;
+}
+
+.networks-title {
+    margin-bottom: 1%;
+}
+
+.networks-row {
+    margin-bottom: 3%;
+}
+
+.mr-b {
+    margin-bottom: 4%;
+}
+
+.edit-input {
+    border: none;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.old-campaigns{
+    margin-bottom: 6%;
 }

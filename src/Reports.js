@@ -156,7 +156,7 @@ export default class Reports extends Component {
                 <div className="row">
                     <strong className="total">Total reports: {this.getSize()}</strong>
                     <div className="col-md-2 col-md-offset-9 col-xs-12">
-                        <button className="btn btn-default add-butt">Add report</button>
+                       <Link to='/new_report'><button className="btn btn-default add-butt">Add report</button></Link>
                     </div>
                 </div>
                 <ReactDataGrid

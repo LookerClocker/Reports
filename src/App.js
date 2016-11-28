@@ -31,7 +31,7 @@ export default class App extends Component {
         let segment = window.location.href.split('/').pop();
         (window.location.href.split('/')[3] == 'edit_report')
             ? segment = 'edit report'
-            : segment = window.location.href.split('/').pop();
+            : ( window.location.href.split('/')[3] == 'view_report') ? segment = 'view report' : segment = window.location.href.split('/').pop();
         return (
             <div className="container-fluid">
                 <AppBar title={this.state.title + segment} iconElementRight={<LogIn/>}/>
