@@ -79,7 +79,9 @@ export default class AddReport extends Component {
             chosenList: '',
             newCampaign: [],
             open: false,
-            sentReport: false
+            sentReport: false,
+            duplicateCampaign: 'You have already chosen this campaign!',
+            hintText: 'Please select another one'
 
 
         }
@@ -158,7 +160,7 @@ export default class AddReport extends Component {
 
     handleChange = (event, index, value) => {
         for (let i = 0; i < clickedCampArray.length; i++) {
-            if (clickedCampArray[i] == value) {
+            if (clickedCampArray[i] === value) {
                 this.setState({
                     open: true
                 });
@@ -169,7 +171,7 @@ export default class AddReport extends Component {
         this.setState({
             value: value,
             chosenCampaign: clickedCampArray,
-            chosenList: 'Your current campaigns'
+            chosenList: 'Your campaigns'
         });
 
         for (let i = 0; i < this.state.campaigns.length; i++) {
@@ -187,7 +189,7 @@ export default class AddReport extends Component {
         let row = [];
         for (let i = 0; i < this.state.campaigns.length; i++) {
             row.push(
-                <MenuItem key={this.state.campaigns[i].id} value={this.state.campaigns[i].id}
+                <MenuItem key={this.state.campaigns[i].id} label=' ' value={this.state.campaigns[i].id}
                           primaryText={this.state.campaigns[i].parentCamp}/>
             );
         }
@@ -238,7 +240,14 @@ export default class AddReport extends Component {
     };
 
     handleAddReport = ()=> {
-
+        if(this.state.chosenCampaign.length === 0 || this.state.reportTitle.length === 0
+        || this.state.customerName.length === 0 || this.state.startDate === 0 || this.state.endDate.length === 0){
+            this.setState({
+                open: true,
+                duplicateCampaign: 'Some fields are empty! Please check and try again.',
+                hintText: ''
+            });
+        }
         if (this.props.params.id) {
             this.updateReport();
         } else {
@@ -413,7 +422,11 @@ export default class AddReport extends Component {
     };
 
     handleClose = () => {
-        this.setState({open: false});
+        this.setState({
+            open: false,
+            duplicateCampaign: 'You have already chosen this campaign!',
+            hintText: 'Please select another one'
+        });
     };
 
     render() {
@@ -426,7 +439,8 @@ export default class AddReport extends Component {
         ];
 
         if (this.props.params.id) {
-            var startDate, endDate, editLogoBlock, displayCampaigns = 'Your old campaigns';
+            var startDate, endDate, editLogoBlock;
+            // var displayCampaigns = 'Your old campaigns';
             (this.state.editStartDate) ? startDate = (
                 <input className="edit-input" type="text" value={this.state.editStartDate}/>) : '';
             (this.state.editEndDate) ? endDate = (
@@ -449,13 +463,13 @@ export default class AddReport extends Component {
             <div className="main-padding main-margin">
                 {reportConfirm}
                 <Dialog
-                    title="You have already chosen this campaign!"
+                    title={this.state.duplicateCampaign}
                     actions={actions}
                     modal={true}
                     contentStyle={customContentStyle}
                     open={this.state.open}
                 >
-                    Please select another one
+                    {this.state.hintText}
                 </Dialog>
                 <div className="row mr-b logo-row">
                     <div className="col-md-6 col-md-offset-1">
@@ -509,14 +523,14 @@ export default class AddReport extends Component {
                                 {endDate}
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-md-2">
-                                <strong>{displayCampaigns}</strong>
-                            </div>
-                            <div className="col-md-5">
-                                {this.pushOldCampaign()}
-                            </div>
-                        </div>
+                        {/*<div className="row">*/}
+                            {/*<div className="col-md-2">*/}
+                                {/*<strong>{displayCampaigns}</strong>*/}
+                            {/*</div>*/}
+                            {/*<div className="col-md-5">*/}
+                                {/*{this.pushOldCampaign()}*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
                         <div className="row">
                             <div className="col-md-2">
                                 <strong>{this.state.chosenList}</strong>

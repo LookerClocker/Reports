@@ -101,19 +101,15 @@ export default class ViewReport extends Component {
         return (
             <div>
                 <div className="container">
-
                     <div className="row">
                         <div className="col-lg-12">
                             <h1 className="page-header">{this.state.name}</h1>
                         </div>
                     </div>
-
                     <div className="row">
-
                         <div className="col-md-4">
                             <img className="img-responsive" src={this.state.logo} alt=""/>
                         </div>
-
                         <div className="col-md-4">
                             <h3>Report Campaigns</h3>
                             {this.displayCampaign()}
