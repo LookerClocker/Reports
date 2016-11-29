@@ -247,6 +247,7 @@ export default class AddReport extends Component {
                 duplicateCampaign: 'Some fields are empty! Please check and try again.',
                 hintText: ''
             });
+            return;
         }
         if (this.props.params.id) {
             this.updateReport();
