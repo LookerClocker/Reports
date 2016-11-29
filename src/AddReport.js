@@ -265,9 +265,7 @@ export default class AddReport extends Component {
                 screenshot.set('image', parseImage);
                 screenshot.save(null, {
                     success: function (screenshot) {
-                        console.log('screenshot', screenshot);
                         fbImgId.push(screenshot.id);
-                        console.log('fbImgId', fbImgId);
                         _this.setState({
                             fbCollectionImgId: fbImgId
                         });
@@ -284,36 +282,36 @@ export default class AddReport extends Component {
                 });
             }
 
-            for (let i = 0; i < twitterImageCollection.length; i++) {
-
-                let screenshot = new ScreenshotClass();
-                let parseImage = new Parse.File(imageName, this.state.twitterScreen[i]);
-
-                parseImage.save().then(function () {
-                }, function (error) {
-                    console.log('TW file could not been saved', error);
-                });
-
-                screenshot.set('image', parseImage);
-
-                screenshot.save(null, {
-                    success: function (screenshot) {
-                        twImgId.push(screenshot.id);
-                        _this.setState({
-                            twCollectionImgId: twImgId
-                        });
-                        report.set('twitterScreenshot', twImgId.map(function (image) {
-                            return {"__type": "Pointer", "className": "Screenshots", "objectId": image}
-
-                        }));
-                    },
-
-                }, {
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
+            // for (let i = 0; i < twitterImageCollection.length; i++) {
+            //
+            //     let screenshot = new ScreenshotClass();
+            //     let parseImage = new Parse.File(imageName, this.state.twitterScreen[i]);
+            //
+            //     parseImage.save().then(function () {
+            //     }, function (error) {
+            //         console.log('TW file could not been saved', error);
+            //     });
+            //
+            //     screenshot.set('image', parseImage);
+            //
+            //     screenshot.save(null, {
+            //         success: function (screenshot) {
+            //             twImgId.push(screenshot.id);
+            //             _this.setState({
+            //                 twCollectionImgId: twImgId
+            //             });
+            //             report.set('twitterScreenshot', twImgId.map(function (image) {
+            //                 return {"__type": "Pointer", "className": "Screenshots", "objectId": image}
+            //
+            //             }));
+            //         },
+            //
+            //     }, {
+            //         error: function (error) {
+            //             console.log(error);
+            //         }
+            //     });
+            // }
 
             report.set('name', this.state.reportTitle);
             report.set('customerName', this.state.customerName);
@@ -334,7 +332,7 @@ export default class AddReport extends Component {
             report.save(null, {
                 success: function (report) {
                     _this.setState({
-                        sentShelter: true
+                        sentReport: true
                     });
                     console.log('REPORT HAS SENT->', report);
                 },
@@ -419,16 +417,7 @@ export default class AddReport extends Component {
     };
 
     render() {
-
-        console.log('fbscrn', this.state.facebookScreen);
         const actions = [
-            <FlatButton
-                label="Ok"
-                primary={true}
-                onTouchTap={this.handleClose}
-            />,
-        ];
-        const actionsLink = [
             <FlatButton
                 label="Ok"
                 primary={true}
