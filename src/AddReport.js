@@ -5,6 +5,8 @@ import DatePicker from 'material-ui/DatePicker';
 import DropzoneComponent from 'react-dropzone-component/lib/react-dropzone';
 import '../node_modules/react-dropzone-component/styles/filepicker.css'
 import '../node_modules/dropzone/dist/min/dropzone.min.css'
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 let Parse = require('parse').Parse;
 let clickedCampArray=[];
 let fbImageCollection=[];
@@ -36,6 +38,11 @@ let componentConfig = {
         },
     };
 
+const customContentStyle = {
+    width: '50%',
+    maxWidth: 'none',
+};
+
 
 export default class AddReport extends Component {
     constructor(props){
@@ -61,12 +68,16 @@ export default class AddReport extends Component {
             twitterScreen:[],
 
             message:'',
-            buttTitle: '',
+            buttTitle: 'Add Report',
 
             editLogo: '',
             editCampaignList: [],
             editStartDate: '',
-            editEndDate: ''
+            editEndDate: '',
+
+            chosenList: '',
+            newCampaign: [],
+            open: false
 
 
 
@@ -145,11 +156,27 @@ export default class AddReport extends Component {
     };
 
     handleChange = (event, index, value) => {
-        clickedCampArray.push(value);
-        this.setState({
-            value: value,
-            chosenCampaign: clickedCampArray
-        });
+        for(let i=0; i<clickedCampArray.length; i++){
+            if(clickedCampArray[i] == value) {
+                this.setState({
+                    open: true
+                });
+                return;
+            }
+        }
+            clickedCampArray.push(value);
+            this.setState({
+                value: value,
+                chosenCampaign: clickedCampArray,
+                chosenList: 'Your current campaigns'
+            });
+
+        for(let i=0; i< this.state.campaigns.length; i++) {
+            if(this.state.campaigns[i].id === value) {
+                this.state.newCampaign.push(this.state.campaigns[i].parentCamp);
+            }
+        }
+
     };
 
     dropDownMenuItems = ()=> {
@@ -323,6 +350,14 @@ export default class AddReport extends Component {
         return campaignsBefore;
     };
 
+    pushNewCampaign=()=>{
+        let campaignsCurrent=[];
+        for(let i=0; i<this.state.newCampaign.length; i++){
+            campaignsCurrent.push(<p key={i}>{this.state.newCampaign[i]}</p>);
+        }
+        return campaignsCurrent;
+    };
+
     clickEndDate=()=>{
         this.setState({
             editEndDate: ''
@@ -335,9 +370,26 @@ export default class AddReport extends Component {
         });
     };
 
+    handleOpen = () => {
+        this.setState({open: true});
+    };
+
+    handleClose = () => {
+        this.setState({open: false});
+    };
+
     render(){
+
+        const actions = [
+            <FlatButton
+                label="Ok"
+                primary={true}
+                onTouchTap={this.handleClose}
+            />,
+        ];
+
         if(this.props.params.id){
-            var startDate, endDate, editLogoBlock, displayCampaigns ='Your campaigns';
+            var startDate, endDate, editLogoBlock, displayCampaigns ='Your old campaigns';
             (this.state.editStartDate) ? startDate = (<input className="edit-input" type="text" value={this.state.editStartDate}/>) : '';
             (this.state.editEndDate) ? endDate = (<input className="edit-input" type="text" value={this.state.editEndDate}/>): '';
             if(this.state.editLogo) {
@@ -352,6 +404,15 @@ export default class AddReport extends Component {
 
         return(
             <div className="main-padding">
+                    <Dialog
+                        title="You have already chosen this campaign!"
+                        actions={actions}
+                        modal={true}
+                        contentStyle={customContentStyle}
+                        open={this.state.open}
+                    >
+                        Please select another one
+                    </Dialog>
                 <div className="row mr-b logo-row">
                     <div className="col-md-6 col-md-offset-1">
                         <div className="row networks-row">
@@ -412,6 +473,14 @@ export default class AddReport extends Component {
                                 {this.pushOldCampaign()}
                             </div>
                         </div>
+                        <div className="row">
+                            <div className="col-md-2">
+                                {this.state.chosenList}
+                            </div>
+                            <div className="col-md-5">
+                                {this.pushNewCampaign()}
+                            </div>
+                        </div>
                     </div>
                     <div className="col-md-3 text-center">
                             <input className="custom-file-input btn btn-default logo-width" type="file"
@@ -452,7 +521,7 @@ export default class AddReport extends Component {
                 </div>
                 <div className="row">
                     <div className="col-md-offset-1 col-md-10">
-                        <button className="btn btn-default" onClick={this.handleAddReport}>Add report</button>
+                        <button className="btn btn-default" onClick={this.handleAddReport}>{this.state.buttTitle}</button>
                     </div>
                 </div>
             </div>
