@@ -80,9 +80,6 @@ export default class AddReport extends Component {
             sentReport: false,
             duplicateCampaign: 'You have already chosen this campaign!',
             hintText: 'Please select another one',
-            editLogo2: ''
-
-
         }
     }
 
@@ -101,12 +98,10 @@ export default class AddReport extends Component {
                     editStartDate: item.get('startDate').toISOString().substring(0, 10),
                     editEndDate: item.get('endDate').toISOString().substring(0, 10),
                     editLogo: item.get('logo')._url,
-                    editLogo2: item.get('logo'),
                     editCampaignList: item.get('campaign').map(function (camp) {
                         return camp.get('ParentCampaign');
                     })
                 });
-
             });
         }
 
@@ -240,8 +235,8 @@ export default class AddReport extends Component {
     };
 
     handleAddReport = ()=> {
-        if(this.state.chosenCampaign.length === 0 || this.state.reportTitle.length === 0
-        || this.state.customerName.length === 0 || this.state.startDate === 0 || this.state.endDate.length === 0){
+        if (this.state.chosenCampaign.length === 0 || this.state.reportTitle.length === 0
+            || this.state.customerName.length === 0 || this.state.startDate === 0 || this.state.endDate.length === 0) {
             this.setState({
                 open: true,
                 duplicateCampaign: 'Some fields are empty! Please check and try again.',
@@ -299,7 +294,7 @@ export default class AddReport extends Component {
         }
     };
 
-    sentScreen=(arrayImageCollection, ScreenshotsObject, imageName, arrayOfScreens, imgArrayIds, report, screenShots)=>{
+    sentScreen = (arrayImageCollection, ScreenshotsObject, imageName, arrayOfScreens, imgArrayIds, report, screenShots)=> {
         for (let i = 0; i < arrayImageCollection.length; i++) {
             let screenshot = new ScreenshotsObject();
             let parseImage = new Parse.File(imageName, arrayOfScreens[i]);
@@ -339,7 +334,16 @@ export default class AddReport extends Component {
         query.equalTo("objectId", this.props.params.id);
 
         let fileName = '____logo.png';
-        let parseFile = new Parse.File(fileName, this.state.file);
+
+        let file;
+        if(this.state.file.length === 0) {
+            file = new File([this.state.editLogo], fileName, {type: 'image/jpeg'});
+        } else {
+            file = this.state.file
+        }
+
+        let parseFile = new Parse.File(fileName, file);
+
         parseFile.save().then(function () {
         }, function (error) {
             console.log('the file could not been saved', error);
@@ -364,11 +368,12 @@ export default class AddReport extends Component {
                     }));
                     report.set('logo', parseFile);
                     report.save(null, {
-                        success: function () {
+                        success: function (report) {
                             self.setState({
                                 sentReport: true,
                                 message: 'Report has been successfully updated'
                             });
+                            console.log(report);
                         },
                     })
                 }
@@ -451,6 +456,17 @@ export default class AddReport extends Component {
                     <div className="col-md-6 col-md-offset-1">
                         <div className="row networks-row">
                             <div className="col-md-2">
+                                <strong>Logo</strong>
+                            </div>
+                            <div className="col-md-5">
+                                {imagePreview}
+                                {editLogoBlock}
+                                <input className="custom-file-input btn btn-default logo-width" type="file"
+                                       onChange={this.handleImageChange}/>
+                            </div>
+                        </div>
+                        <div className="row networks-row">
+                            <div className="col-md-2">
                                 <strong>Report title</strong></div>
                             <div className="col-md-5">
                                 <input
@@ -509,12 +525,10 @@ export default class AddReport extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-3 text-center">
-                        <input className="custom-file-input btn btn-default logo-width" type="file"
-                               onChange={this.handleImageChange}/>
-                        {imagePreview}
-                        {editLogoBlock}
-                    </div>
+                    {/*<div className="col-md-3 text-center">*/}
+                    {/*<input className="custom-file-input btn btn-default logo-width" type="file"*/}
+                    {/*onChange={this.handleImageChange}/>*/}
+                    {/*</div>*/}
                 </div>
                 <div className="row dates">
                     <div className="col-md-10 text-center col-md-offset-1">

@@ -140,12 +140,12 @@ export default class ViewReport extends Component {
                         {this.displayScreen(this.state.twitterId)}
                     </div>
                     <hr/>
-                    <footer>
-                        <div className="row">
-                            <div className="col-lg-12">
-                                <p>Copyright &copy; VYN-Report</p>
-                            </div>
+                    <div className="row">
+                        <div className="co-md-12">
+
                         </div>
+                    </div>
+                    <footer>
                     </footer>
                 </div>
             </div>

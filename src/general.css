@@ -38,7 +38,7 @@
 }
 
 .custom-file-input::before {
-    content: 'Chose logo:';
+    content: 'Chose Logo:';
     text-align: left;
 }
 
@@ -58,6 +58,7 @@
 .edit-imag {
     padding-top: 3%;
     border-radius: 11px;
+    margin-bottom: 5%;
 }
 
 .title-margin {
@@ -94,7 +95,7 @@
 }
 
 .mr-b {
-    margin-bottom: 2%;
+    margin-bottom: 1%;
 }
 
 .edit-input {
