@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
+var d3 = require('d3');
+var LineChart = require('react-d3-basic').LineChart;
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -98,6 +100,45 @@ export default class ViewReport extends Component {
     };
 
     render() {
+
+        console.log('d3',d3);
+
+        var data = [
+            {
+                "age": 12,
+                "index": 0
+            },
+            {
+                "age": 38,
+                "index": 1
+            },
+            {
+                "age": 34,
+                "index": 2
+            },
+            {
+                "age": 12,
+                "index": 3
+            }
+        ];
+
+        var chartSeries = [
+                {
+                    field: 'age',
+                    name: 'Age',
+                    color: '#ff7f0e',
+                    style: {
+                        "stroke-width": 2,
+                        "stroke-opacity": .2,
+                        "fill-opacity": .2
+                    }
+                }
+            ],
+            x = function(d) {
+                console.log('this is d',d);
+                return d.index;
+            };
+
         return (
             <div>
                 <div className="container">
@@ -142,7 +183,7 @@ export default class ViewReport extends Component {
                     <hr/>
                     <div className="row">
                         <div className="co-md-12">
-
+                            <LineChart width= {800} height= {300} data= {data} chartSeries= {chartSeries} x= {x} />
                         </div>
                     </div>
                     <footer>

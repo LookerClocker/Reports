@@ -23,6 +23,7 @@
     "material-ui": "^0.16.4",
     "parse": "^1.9.2",
     "react": "^15.4.1",
+    "react-d3-basic": "^1.6.11",
     "react-dom": "^15.4.1",
     "react-dropzone-component": "^1.2.0",
     "react-tap-event-plugin": "^2.0.1"
