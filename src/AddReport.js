@@ -29,13 +29,11 @@ let componentConfig = {
     eventHandlersFb = {
         addedfile: function (file) {
             fbImageCollection.push(file);
-            console.log('fb', fbImageCollection);
         },
     },
     eventHandlersTwitter = {
         addedfile: function (file) {
             twitterImageCollection.push(file);
-            console.log('tw', twitterImageCollection);
         },
     };
 
@@ -81,7 +79,8 @@ export default class AddReport extends Component {
             open: false,
             sentReport: false,
             duplicateCampaign: 'You have already chosen this campaign!',
-            hintText: 'Please select another one'
+            hintText: 'Please select another one',
+            editLogo2: ''
 
 
         }
@@ -102,6 +101,7 @@ export default class AddReport extends Component {
                     editStartDate: item.get('startDate').toISOString().substring(0, 10),
                     editEndDate: item.get('endDate').toISOString().substring(0, 10),
                     editLogo: item.get('logo')._url,
+                    editLogo2: item.get('logo'),
                     editCampaignList: item.get('campaign').map(function (camp) {
                         return camp.get('ParentCampaign');
                     })
@@ -211,8 +211,8 @@ export default class AddReport extends Component {
     handleImageChange = (e)=> {
         e.preventDefault();
 
-        var reader = new FileReader();
-        var file = e.target.files[0];
+        let reader = new FileReader();
+        let file = e.target.files[0];
 
         reader.onloadend = () => {
             this.setState({
@@ -254,9 +254,7 @@ export default class AddReport extends Component {
         } else {
 
             let self = this;
-
             let token = Math.random().toString(36).substr(2);
-
             let ScreenshotClass = Parse.Object.extend('Screenshots');
             let ReportClass = Parse.Object.extend('Report');
             let report = new ReportClass();
@@ -301,10 +299,8 @@ export default class AddReport extends Component {
         }
     };
 
-
     sentScreen=(arrayImageCollection, ScreenshotsObject, imageName, arrayOfScreens, imgArrayIds, report, screenShots)=>{
         for (let i = 0; i < arrayImageCollection.length; i++) {
-
             let screenshot = new ScreenshotsObject();
             let parseImage = new Parse.File(imageName, arrayOfScreens[i]);
             parseImage.save().then(function () {
@@ -336,7 +332,6 @@ export default class AddReport extends Component {
             });
         }
     };
-
 
     updateReport = ()=> {
         let self = this;
@@ -382,14 +377,6 @@ export default class AddReport extends Component {
         })
     };
 
-    pushOldCampaign = ()=> {
-        let campaignsBefore = [];
-        for (let i = 0; i < this.state.editCampaignList.length; i++) {
-            campaignsBefore.push(<p key={i}>{this.state.editCampaignList[i]}</p>);
-        }
-        return campaignsBefore;
-    };
-
     pushNewCampaign = ()=> {
         let campaignsCurrent = [];
         for (let i = 0; i < this.state.newCampaign.length; i++) {
@@ -424,7 +411,7 @@ export default class AddReport extends Component {
                 label="Ok"
                 primary={true}
                 onTouchTap={this.handleClose}
-            />,
+            />
         ];
 
         if (this.props.params.id) {
@@ -463,10 +450,10 @@ export default class AddReport extends Component {
                 <div className="row mr-b logo-row">
                     <div className="col-md-6 col-md-offset-1">
                         <div className="row networks-row">
+                            <div className="col-md-2">
+                                <strong>Report title</strong></div>
                             <div className="col-md-5">
-                                <label for="title">Report title</label>
                                 <input
-                                    id="title"
                                     className="form-control"
                                     type="text"
                                     value={this.state.reportTitle}
@@ -475,10 +462,11 @@ export default class AddReport extends Component {
                             </div>
                         </div>
                         <div className="row networks-row">
+                            <div className="col-md-2">
+                                <strong>Customer name</strong>
+                            </div>
                             <div className="col-md-5">
-                                <label for="name">Customer name</label>
                                 <input
-                                    id="name"
                                     className="form-control"
                                     type="text"
                                     value={this.state.customerName}
@@ -512,14 +500,6 @@ export default class AddReport extends Component {
                                 {endDate}
                             </div>
                         </div>
-                        {/*<div className="row">*/}
-                            {/*<div className="col-md-2">*/}
-                                {/*<strong>{displayCampaigns}</strong>*/}
-                            {/*</div>*/}
-                            {/*<div className="col-md-5">*/}
-                                {/*{this.pushOldCampaign()}*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
                         <div className="row">
                             <div className="col-md-2">
                                 <strong>{this.state.chosenList}</strong>
@@ -536,7 +516,6 @@ export default class AddReport extends Component {
                         {editLogoBlock}
                     </div>
                 </div>
-
                 <div className="row dates">
                     <div className="col-md-10 text-center col-md-offset-1">
                         <strong>Choose campaign</strong>
