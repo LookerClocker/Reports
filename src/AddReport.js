@@ -253,75 +253,21 @@ export default class AddReport extends Component {
             this.updateReport();
         } else {
 
-            var _this = this;
+            let self = this;
 
-            var token = Math.random().toString(36).substr(2);
+            let token = Math.random().toString(36).substr(2);
 
-            var ScreenshotClass = Parse.Object.extend('Screenshots');
-            var ReportClass = Parse.Object.extend('Report');
-            var report = new ReportClass();
+            let ScreenshotClass = Parse.Object.extend('Screenshots');
+            let ReportClass = Parse.Object.extend('Report');
+            let report = new ReportClass();
 
             // adding multiply images into Screenshots Class on Parse
-            var imageName = '____image.png';
+            let imageName = '____image.png';
+            let facebookScreen = 'facebookScreenshot';
+            let twitterScreen = 'twitterScreenshot';
 
-            for (var i = 0; i < fbImageCollection.length; i++) {
-
-                var screenshot = new ScreenshotClass();
-                var parseImage = new Parse.File(imageName, this.state.facebookScreen[i]);
-                parseImage.save().then(function () {
-                }, function (error) {
-                    console.log('FB file could not been saved nto Screenshots table', error);
-                });
-                screenshot.set('image', parseImage);
-                screenshot.save(null, {
-                    success: function (screenshot) {
-                        fbImgId.push(screenshot.id);
-                        _this.setState({
-                            fbCollectionImgId: fbImgId
-                        });
-                        report.set('facebookScreenshot', fbImgId.map(function (image) {
-                            return {"__type": "Pointer", "className": "Screenshots", "objectId": image}
-
-                        }));
-                    },
-
-                }, {
-                    error: function (error) {
-                        console.log(error);
-                    }
-                });
-            }
-
-            // for (let i = 0; i < twitterImageCollection.length; i++) {
-            //
-            //     let screenshot = new ScreenshotClass();
-            //     let parseImage = new Parse.File(imageName, this.state.twitterScreen[i]);
-            //
-            //     parseImage.save().then(function () {
-            //     }, function (error) {
-            //         console.log('TW file could not been saved', error);
-            //     });
-            //
-            //     screenshot.set('image', parseImage);
-            //
-            //     screenshot.save(null, {
-            //         success: function (screenshot) {
-            //             twImgId.push(screenshot.id);
-            //             _this.setState({
-            //                 twCollectionImgId: twImgId
-            //             });
-            //             report.set('twitterScreenshot', twImgId.map(function (image) {
-            //                 return {"__type": "Pointer", "className": "Screenshots", "objectId": image}
-            //
-            //             }));
-            //         },
-            //
-            //     }, {
-            //         error: function (error) {
-            //             console.log(error);
-            //         }
-            //     });
-            // }
+            this.sentScreen(fbImageCollection, ScreenshotClass, imageName, this.state.facebookScreen, fbImgId, report, facebookScreen);
+            this.sentScreen(twitterImageCollection, ScreenshotClass, imageName, this.state.twitterScreen, twImgId, report, twitterScreen);
 
             report.set('name', this.state.reportTitle);
             report.set('customerName', this.state.customerName);
@@ -332,8 +278,8 @@ export default class AddReport extends Component {
             }));
             report.set('token', token);
 
-            var fileName = '____logo.png';
-            var parseFile = new Parse.File(fileName, this.state.file);
+            let fileName = '____logo.png';
+            let parseFile = new Parse.File(fileName, this.state.file);
             parseFile.save().then(function () {
             }, function (error) {
                 console.log('the file could not been saved', error);
@@ -341,7 +287,7 @@ export default class AddReport extends Component {
             report.set('logo', parseFile);
             report.save(null, {
                 success: function (report) {
-                    _this.setState({
+                    self.setState({
                         sentReport: true
                     });
                     console.log('REPORT HAS SENT->', report);
@@ -352,37 +298,79 @@ export default class AddReport extends Component {
                     console.log(error);
                 }
             });
-
         }
-
     };
 
+
+    sentScreen=(arrayImageCollection, ScreenshotsObject, imageName, arrayOfScreens, imgArrayIds, report, screenShots)=>{
+        for (let i = 0; i < arrayImageCollection.length; i++) {
+
+            let screenshot = new ScreenshotsObject();
+            let parseImage = new Parse.File(imageName, arrayOfScreens[i]);
+            parseImage.save().then(function () {
+            }, function (error) {
+                console.log('FB file could not been saved nto Screenshots table', error);
+            });
+            screenshot.set('image', parseImage);
+            screenshot.save(null, {
+                success: function (screen) {
+                    imgArrayIds.push(screen.id);
+                    report.set(screenShots, imgArrayIds.map(function (image) {
+                        return {"__type": "Pointer", "className": "Screenshots", "objectId": image}
+                    }));
+                    report.save(null, {
+                        success: function (report) {
+                            console.log('REPORT HAS SENT image->', report);
+                        },
+                    }, {
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                },
+
+            }, {
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+    };
+
+
     updateReport = ()=> {
-        var _this = this;
-        var query = new Parse.Query('Report');
+        let self = this;
+        let query = new Parse.Query('Report');
         query.equalTo("objectId", this.props.params.id);
 
-        var fileName = '____logo.png';
-        var parseFile = new Parse.File(fileName, this.state.file);
+        let fileName = '____logo.png';
+        let parseFile = new Parse.File(fileName, this.state.file);
         parseFile.save().then(function () {
         }, function (error) {
             console.log('the file could not been saved', error);
         });
 
+        let ScreenshotClass = Parse.Object.extend('Screenshots');
+        let imageName = '____image.png';
+        let facebookScreen = 'facebookScreenshot';
+        let twitterScreen = 'twitterScreenshot';
+
         query.first().then(function (Report) {
             Report.save(null, {
                 success: function (report) {
-                    report.set('name', _this.state.reportTitle);
-                    report.set('customerName', _this.state.customerName);
-                    report.set('startDate', _this.state.startDate);
-                    report.set('endDate', _this.state.endDate);
-                    report.set('campaign', _this.state.chosenCampaign.map(function (camp) {
+                    self.sentScreen(fbImageCollection, ScreenshotClass, imageName, self.state.facebookScreen, fbImgId, report, facebookScreen);
+                    self.sentScreen(twitterImageCollection, ScreenshotClass, imageName, self.state.twitterScreen, twImgId, report, twitterScreen);
+                    report.set('name', self.state.reportTitle);
+                    report.set('customerName', self.state.customerName);
+                    report.set('startDate', self.state.startDate);
+                    report.set('endDate', self.state.endDate);
+                    report.set('campaign', self.state.chosenCampaign.map(function (camp) {
                         return {"__type": "Pointer", "className": "Campaign", "objectId": camp}
                     }));
                     report.set('logo', parseFile);
                     report.save(null, {
                         success: function () {
-                            _this.setState({
+                            self.setState({
                                 sentReport: true,
                                 message: 'Report has been successfully updated'
                             });
