@@ -131,3 +131,60 @@ div.filepicker {
     min-height: 60px;
     border: 2px dashed #C7C7C7;
 }
+
+.click-ul {
+    font-weight: bold;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.click-title {
+    color: #948e8e;
+}
+.total-click-title {
+    color: #948e8e;
+    font-weight: bold;
+}
+
+ul li {
+    color: #00bcd4;
+    cursor: pointer;
+}
+
+.clicks-box {
+    top: -13px;
+    position: absolute;
+    z-index: 2;
+    background-color: #fff;
+
+    width: 110px;
+    height: 60px;
+    border: 1px solid #bdb7b7;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.total-click {
+    font-weight: bold;
+    font-size: 28px;
+}
+
+.react-d3-core__legend{
+    display: none;
+}
+
+.past-row {
+    left: 47%;
+    position: absolute;
+}
+
+.graph-row {
+    margin-top: 4%;
+}

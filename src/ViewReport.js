@@ -101,32 +101,32 @@ export default class ViewReport extends Component {
 
     render() {
 
-        console.log('d3',d3);
+        console.log('d3', d3);
 
         var data = [
             {
-                "age": 12,
-                "index": 0
+                "clicks": 250,
+                "index": 30
             },
             {
-                "age": 38,
-                "index": 1
+                "clicks": 500,
+                "index": 33
             },
             {
-                "age": 34,
-                "index": 2
+                "clicks": 750,
+                "index": 45
             },
             {
-                "age": 12,
-                "index": 3
+                "clicks": 1000,
+                "index": 50
             }
         ];
 
         var chartSeries = [
                 {
-                    field: 'age',
-                    name: 'Age',
-                    color: '#ff7f0e',
+                    field: 'clicks',
+                    name: 'clicks',
+                    color: '#00bcd4',
                     style: {
                         "stroke-width": 2,
                         "stroke-opacity": .2,
@@ -134,8 +134,8 @@ export default class ViewReport extends Component {
                     }
                 }
             ],
-            x = function(d) {
-                console.log('this is d',d);
+            x = function (d) {
+                console.log('this is d', d);
                 return d.index;
             };
 
@@ -169,21 +169,38 @@ export default class ViewReport extends Component {
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
-                            <h3 className="page-header">Facebook</h3>
+                            <h3 className="page-header">Facebook Top Posts</h3>
                         </div>
                         {this.displayScreen(this.state.facebookId)}
                     </div>
                     <hr/>
                     <div className="row">
                         <div className="col-lg-12">
-                            <h3 className="page-header">Twitter</h3>
+                            <h3 className="page-header">Twitter Top Posts</h3>
                         </div>
                         {this.displayScreen(this.state.twitterId)}
                     </div>
                     <hr/>
-                    <div className="row">
+                    <div className="row graph-row text-center">
+                        <div className="col-md-offset-2 col-md-2 text-center">
+                            <div className="clicks-box">
+                                <div><span className="total-click-title">Total Clicks</span> <br/>
+                                    <span className="total-click ">4,189</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="past-row">
+                            <ul>
+                                <li className="click-ul click-title">Clicks for the past:</li>
+                                <li className="click-ul">two hours</li>
+                                <li className="click-ul">day</li>
+                                <li className="click-ul">week</li>
+                                <li className="click-ul">month</li>
+                                <li className="click-ul">all time</li>
+                            </ul>
+                        </div>
                         <div className="co-md-12">
-                            <LineChart width= {800} height= {300} data= {data} chartSeries= {chartSeries} x= {x} />
+                            <LineChart width={1000} height={300} data={data} chartSeries={chartSeries} x={x}/>
                         </div>
                     </div>
                     <footer>
