@@ -83,27 +83,54 @@ export default class ViewReport extends Component {
                         }
                     }),
                     uniqueUser: item.map(function (elem) {
-                        return elem.get('userId')
+                        return elem.userId;
                     })
                 });
             });
         });
     };
 
-    getClicks = (callback)=> {
+    getClicks(callback) {
+        let self = this;
         let query = new Parse.Query('Click');
+
         let pointer = this.state.campaignsId.map(function (elem) {
             let pointer = new Parse.Object('Campaign');
             pointer.id = elem;
             return pointer
         });
-        query.limit(1000);
-        query.containedIn('campaign', pointer);
-        query.include('campaign');
-        query.equalTo('validated', true);
-        query.find().then(function (click) {
-            callback(click);
+        query.count().then(function (number) {
+            query.limit(1000);
+            query.skip(0);
+            query.containedIn('campaign', pointer);
+            query.include('campaign');
+            query.equalTo('validated', true);
+            query.addAscending('createdAt');
+
+            var allObj = [];
+
+            for (var i = 0; i <= number; i += 1000) {
+                query.skip(i);
+                query.find().then(function (click) {
+                    allObj = allObj.concat(self.fullFill(click));
+                    self.setState({
+                        validatedClick: allObj
+                    });
+                    callback(allObj);
+
+                });
+            }
         });
+
+    };
+
+    fullFill = (object)=> {
+        return object.map(function (elem) {
+            return {
+                id: elem.id,
+                userId: elem.get('userId')
+            }
+        })
     };
 
     cpcPercent = (bigNumber, clicks, budget)=> {
@@ -163,11 +190,6 @@ export default class ViewReport extends Component {
     }
 
     render() {
-        // console.log('campaignsID', this.state.campaignsId);
-        // console.log('validate click', this.state.validatedClick);
-        // console.log('array', this.state.array);
-        // console.log('uniqueUser', this.state.uniqueUser);
-        // console.log('uniqueUser2 ', this.uniqUsers(this.state.uniqueUser));
         return (
             <div>
                 <div className="container">
@@ -272,4 +294,4 @@ export default class ViewReport extends Component {
             </div>
         )
     }
-}
+};

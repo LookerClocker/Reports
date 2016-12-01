@@ -245,7 +245,9 @@ export default class AddReport extends Component {
 
     handleAddReport = ()=> {
         if (this.state.chosenCampaign.length === 0 || this.state.reportTitle.length === 0
-            || this.state.customerName.length === 0 || this.state.startDate === 0 || this.state.endDate.length === 0) {
+            || this.state.customerName.length === 0 || this.state.startDate === 0 || this.state.endDate.length === 0
+        || this.state.cpcMax.length === 0 || this.state.budget.length === 0 || this.state.twitterReach.length === 0
+        || this.state.facebookReach.length === 0) {
             this.setState({
                 open: true,
                 duplicateCampaign: 'Some fields are empty! Please check and try again.',
