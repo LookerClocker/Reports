@@ -80,6 +80,11 @@ export default class AddReport extends Component {
             sentReport: false,
             duplicateCampaign: 'You have already chosen this campaign!',
             hintText: 'Please select another one',
+
+            twitterReach: '',
+            facebookReach: '',
+            budget: '',
+            cpcMax: ''
         }
     }
 
@@ -100,7 +105,11 @@ export default class AddReport extends Component {
                     editLogo: item.get('logo')._url,
                     editCampaignList: item.get('campaign').map(function (camp) {
                         return camp.get('ParentCampaign');
-                    })
+                    }),
+                    budget: item.get('budget'),
+                    twitterReach: item.get('reachTwitter'),
+                    facebookReach: item.get('reachFacebook'),
+                    cpcMax: item.get('cpcMax')
                 });
             });
         }
@@ -270,6 +279,10 @@ export default class AddReport extends Component {
                 return {"__type": "Pointer", "className": "Campaign", "objectId": camp}
             }));
             report.set('token', token);
+            report.set('budget', this.state.budget);
+            report.set('reachTwitter', this.state.twitterReach);
+            report.set('reachFacebook', this.state.facebookReach);
+            report.set('cpcMax', this.state.cpcMax);
 
             let fileName = '____logo.png';
             let parseFile = new Parse.File(fileName, this.state.file);
@@ -366,6 +379,10 @@ export default class AddReport extends Component {
                     report.set('campaign', self.state.chosenCampaign.map(function (camp) {
                         return {"__type": "Pointer", "className": "Campaign", "objectId": camp}
                     }));
+                    report.set('budget', self.state.budget);
+                    report.set('reachTwitter', self.state.twitterReach);
+                    report.set('reachFacebook', self.state.facebookReach);
+                    report.set('cpcMax', self.state.cpcMax);
                     report.set('logo', parseFile);
                     report.save(null, {
                         success: function (report) {
@@ -453,7 +470,7 @@ export default class AddReport extends Component {
                     {this.state.hintText}
                 </Dialog>
                 <div className="row mr-b logo-row">
-                    <div className="col-md-6 col-md-offset-1">
+                    <div className="col-md-5 col-md-offset-1">
                         <div className="row networks-row">
                             <div className="col-md-2">
                                 <strong>Logo</strong>
@@ -529,6 +546,60 @@ export default class AddReport extends Component {
                     {/*<input className="custom-file-input btn btn-default logo-width" type="file"*/}
                     {/*onChange={this.handleImageChange}/>*/}
                     {/*</div>*/}
+                    <div className="col-md-6">
+                        <div className="row networks-row">
+                            <div className="col-md-2">
+                                <strong>Facebook reach</strong>
+                            </div>
+                            <div className="col-md-4">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    value={this.state.facebookReach}
+                                    onChange={e=> this.setState({facebookReach: e.target.value})}>
+                                </input>
+                            </div>
+                        </div>
+                        <div className="row networks-row">
+                            <div className="col-md-2">
+                                <strong>Twitter reach</strong>
+                            </div>
+                            <div className="col-md-4">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    value={this.state.twitterReach}
+                                    onChange={e=> this.setState({twitterReach: e.target.value})}>
+                                </input>
+                            </div>
+                        </div>
+                        <div className="row networks-row">
+                            <div className="col-md-2">
+                                <strong>Budget</strong>
+                            </div>
+                            <div className="col-md-4">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    value={this.state.budget}
+                                    onChange={e=> this.setState({budget: e.target.value})}>
+                                </input>
+                            </div>
+                        </div>
+                        <div className="row networks-row">
+                            <div className="col-md-2">
+                                <strong>cpcMax</strong>
+                            </div>
+                            <div className="col-md-4">
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    value={this.state.cpcMax}
+                                    onChange={e=> this.setState({cpcMax: e.target.value})}>
+                                </input>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div className="row dates">
                     <div className="col-md-10 text-center col-md-offset-1">

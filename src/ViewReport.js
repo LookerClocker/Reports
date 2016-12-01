@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
-var d3 = require('d3');
-var LineChart = require('react-d3-basic').LineChart;
+let _ = require("underscore");
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -15,7 +14,16 @@ export default class ViewReport extends Component {
             campaigns: [],
             allScreen: [],
             facebookId: [],
-            twitterId: []
+            twitterId: [],
+            twitterReach: '',
+            facebookReach: '',
+            budget: '',
+            cpcMax: '',
+
+            campaignsId: [],
+            validatedClick: [],
+            array: [],
+            uniqueUser: []
         }
     }
 
@@ -32,15 +40,20 @@ export default class ViewReport extends Component {
                     campaigns: item.get('campaign').map(function (camp) {
                         return camp.get('ParentCampaign');
                     }),
+                    campaignsId: item.get('campaign').map(function (camp) {
+                        return camp.id;
+                    }),
                     facebookId: item.get('facebookScreenshot') ? item.get('facebookScreenshot').map(function (elem) {
                         return elem.id;
                     }) : '',
                     twitterId: item.get('twitterScreenshot') ? item.get('twitterScreenshot').map(function (elem) {
                         return elem.id;
                     }) : '',
-
-
-                })
+                    twitterReach: item.get('reachTwitter') ? item.get('reachTwitter') : '',
+                    facebookReach: item.get('reachTwitter') ? item.get('reachFacebook') : '',
+                    budget: item.get('reachTwitter') ? item.get('budget') : '',
+                    cpcMax: item.get('reachTwitter') ? item.get('cpcMax') : ''
+                });
             });
 
             this.getScreen(function (item) {
@@ -54,16 +67,62 @@ export default class ViewReport extends Component {
                 })
             });
         }
+    };
 
-    }
 
     getReport = (callback)=> {
+        let self = this;
         let query = new Parse.Query('Report');
         query.equalTo('objectId', this.props.params.id);
         query.include('campaign');
         query.first().then(function (report) {
             callback(report);
+            self.getClicks(function (item) {
+                console.log('item', item);
+                self.setState({
+                    validatedClick: item.map(function (elem) {
+                        return {
+                            id: elem.id
+                        }
+                    }),
+                    uniqueUser: item.map(function (elem) {
+                        return elem.get('userId')
+                    })
+                });
+            });
         });
+    };
+
+    getClicks = (callback)=> {
+        let query = new Parse.Query('Click');
+        let pointer = this.state.campaignsId.map(function (elem) {
+            let pointer = new Parse.Object('Campaign');
+            pointer.id = elem;
+            return pointer
+        });
+        query.containedIn('campaign', pointer);
+        query.include('campaign');
+        query.equalTo('validated', true);
+        query.find().then(function (click) {
+            callback(click);
+        });
+    };
+
+    cpcPercent = (bigNumber, clicks, budget)=> {
+        if (this.state.cpcMax.length === 0 || this.state.budget.length === 0) return null;
+        let cpcMax = (Math.round(bigNumber * 100) / 100).toFixed(2);
+        let cpcReal = (Math.round(parseInt(budget) / parseInt(clicks) * 100) / 100).toFixed(2);
+        let middle_result = cpcReal * 100 / cpcMax;
+        let result = 100 - middle_result;
+        return result.toFixed(0);
+    };
+
+    clicksPercent = (budget, cpcMax, realClick)=> {
+        if (this.state.cpcMax.length === 0 || this.state.budget.length === 0) return null;
+        let expCl = (parseInt(budget) / (Math.round(cpcMax * 100) / 100)).toFixed(0);
+        let middle = expCl * 100 / realClick;
+        let result = 100 - middle;
+        return result.toFixed(0);
     };
 
     getScreen = (callback)=> {
@@ -96,64 +155,37 @@ export default class ViewReport extends Component {
             }
 
         }
+        console.log('screen',screens);
         return screens;
     };
 
+    uniqUsers(a) {
+        return Array.from(new Set(a)).length;
+    }
+
     render() {
-
-        console.log('d3', d3);
-
-        var data = [
-            {
-                "clicks": 250,
-                "index": 30
-            },
-            {
-                "clicks": 500,
-                "index": 33
-            },
-            {
-                "clicks": 750,
-                "index": 45
-            },
-            {
-                "clicks": 1000,
-                "index": 50
-            }
-        ];
-
-        var chartSeries = [
-                {
-                    field: 'clicks',
-                    name: 'clicks',
-                    color: '#00bcd4',
-                    style: {
-                        "stroke-width": 2,
-                        "stroke-opacity": .2,
-                        "fill-opacity": .2
-                    }
-                }
-            ],
-            x = function (d) {
-                console.log('this is d', d);
-                return d.index;
-            };
-
+        // console.log('campaignsID', this.state.campaignsId);
+        // console.log('validate click', this.state.validatedClick);
+        // console.log('array', this.state.array);
+        // console.log('uniqueUser', this.state.uniqueUser);
         return (
             <div>
                 <div className="container">
                     <div className="row">
+                        <div className="col-md-4 col-md-offset-4 text-center">
+                            <img className="vyn-logo"
+                                 src="http://valueyournetwork.com/wp-content/uploads/2016/11/value_your_network_influenceurs.png"
+                                 alt="Value Your Network"/>
+                        </div>
+                    </div>
+                    <div className="row">
                         <div className="col-lg-12">
-                            <h1 className="page-header">{this.state.name}</h1>
+                            <h1 className="page-header main-text">{this.state.name}</h1>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col-md-4">
-                            <img className="img-responsive" src={this.state.logo} alt=""/>
-                        </div>
-                        <div className="col-md-4">
-                            <h3>Report Campaigns</h3>
-                            {this.displayCampaign()}
+                            <img className="img-responsive main-logo-w" src={this.state.logo} alt=""/>
                         </div>
                         <div className="col-md-4">
                             <h3>Report Details</h3>
@@ -166,6 +198,37 @@ export default class ViewReport extends Component {
                                 <div className="col-md-6">{this.state.endDate}</div>
                             </div>
                         </div>
+                    </div>
+                    <div className="row text-center page-header">
+                        <div className="col-md-4 main-text title-uniq"><strong>{this.uniqUsers(this.state.uniqueUser)}</strong></div>
+                        <div className="col-md-4 main-text title-uniq"><strong>{this.state.validatedClick.length}</strong></div>
+                        <div className="col-md-4 main-text title-uniq">
+                            <strong>{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</strong>
+                        </div>
+                    </div>
+                    <div className="row text-center">
+                        <div className="col-md-4 main-text"><strong>Unique Users</strong></div>
+                        <div className="col-md-4 main-text"><strong>Clicks</strong></div>
+                        <div className="col-md-4 main-text"><strong>Total reaches</strong></div>
+                    </div>
+                    <div className="row text-center budget-row">
+                        <div className="col-md-4"><strong>{this.state.budget} €</strong><p>budget</p></div>
+                        <div className="col-md-4"><strong>{this.state.cpcMax} €</strong><p>cpcMax</p></div>
+                        <div className="col-md-4">
+                            <strong>{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}</strong>
+                            <p>expected clicks</p></div>
+                    </div>
+                    <div className="row text-center budget-row">
+                        <div className="col-md-offset-4 col-md-4">
+                            <strong>{(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
+                                €</strong><p>cpcReal</p></div>
+                        <div className="col-md-4"><strong>2650</strong><p>validated clicks</p></div>
+                    </div>
+                    <div className="row text-center budget-row">
+                        <div className="col-md-offset-4 col-md-4">
+                            <strong>{this.cpcPercent(this.state.cpcMax, this.state.validatedClick.length, this.state.budget)} %</strong></div>
+                        <div className="col-md-4">
+                            <strong>{this.clicksPercent(this.state.budget, this.state.cpcMax, this.state.validatedClick.length)} %</strong></div>
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
@@ -181,28 +244,6 @@ export default class ViewReport extends Component {
                         {this.displayScreen(this.state.twitterId)}
                     </div>
                     <hr/>
-                    <div className="row graph-row text-center">
-                        <div className="col-md-offset-2 col-md-2 text-center">
-                            <div className="clicks-box">
-                                <div><span className="total-click-title">Total Clicks</span> <br/>
-                                    <span className="total-click ">4,189</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="past-row">
-                            <ul>
-                                <li className="click-ul click-title">Clicks for the past:</li>
-                                <li className="click-ul">two hours</li>
-                                <li className="click-ul">day</li>
-                                <li className="click-ul">week</li>
-                                <li className="click-ul">month</li>
-                                <li className="click-ul">all time</li>
-                            </ul>
-                        </div>
-                        <div className="co-md-12">
-                            <LineChart width={1000} height={300} data={data} chartSeries={chartSeries} x={x}/>
-                        </div>
-                    </div>
                     <footer>
                     </footer>
                 </div>

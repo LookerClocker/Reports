@@ -51,6 +51,11 @@
     width: 100%;
 }
 
+.vyn-logo {
+    margin-top: 7%;
+    width:100%;
+}
+
 .logo-row {
     margin: 10px 0 5% 0;
 }
@@ -187,4 +192,21 @@ ul li {
 
 .graph-row {
     margin-top: 4%;
+}
+
+.main-text {
+    color:#d43346
+}
+
+.main-logo-w {
+    width:80%
+}
+
+.title-uniq {
+    font-size: 44px;
+}
+
+.budget-row {
+    color: #676262;
+    margin-top: 5%;
 }

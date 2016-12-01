@@ -26,7 +26,8 @@
     "react-d3-basic": "^1.6.11",
     "react-dom": "^15.4.1",
     "react-dropzone-component": "^1.2.0",
-    "react-tap-event-plugin": "^2.0.1"
+    "react-tap-event-plugin": "^2.0.1",
+    "underscore": "^1.8.3"
   },
   "scripts": {
     "start": "react-scripts start",
