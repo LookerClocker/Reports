@@ -210,3 +210,26 @@ ul li {
     color: #676262;
     margin-top: 5%;
 }
+
+.glyph-click {
+    margin-top: 2%;
+}
+
+.glyph-row{
+    margin-top: 3%;
+}
+
+.body-click {
+    background-color: rgba(169, 35, 51, 0.17);
+    padding-bottom: 2%;
+    font-size: 17px;
+}
+
+.rep-detail {
+    color: #777273;
+    font-size: 19px;
+}
+
+.static-img {
+    height: 273px;
+}

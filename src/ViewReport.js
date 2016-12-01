@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
-let _ = require("underscore");
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -77,7 +76,6 @@ export default class ViewReport extends Component {
         query.first().then(function (report) {
             callback(report);
             self.getClicks(function (item) {
-                console.log('item', item);
                 self.setState({
                     validatedClick: item.map(function (elem) {
                         return {
@@ -99,6 +97,7 @@ export default class ViewReport extends Component {
             pointer.id = elem;
             return pointer
         });
+        query.limit(1000);
         query.containedIn('campaign', pointer);
         query.include('campaign');
         query.equalTo('validated', true);
@@ -110,19 +109,19 @@ export default class ViewReport extends Component {
     cpcPercent = (bigNumber, clicks, budget)=> {
         if (this.state.cpcMax.length === 0 || this.state.budget.length === 0) return null;
 
-        let cpcReal = (Math.round(parseInt(budget) / parseInt(clicks))).toFixed(2);
         let cpcMax = (Math.round(bigNumber * 100) / 100).toFixed(2);
+        let cpcReal = (Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)
 
-        let middle_result = cpcReal - cpcMax;
-        let result = (middle_result/cpcMax) *100;
+        let middle_result = (cpcReal - cpcMax) / cpcMax;
+        let result = middle_result * 100;
         return result.toFixed(0);
     };
 
     clicksPercent = (budget, cpcMax, realClick)=> {
         if (this.state.cpcMax.length === 0 || this.state.budget.length === 0) return null;
         let expCl = (parseInt(budget) / (Math.round(cpcMax * 100) / 100)).toFixed(0);
-        let middle = (realClick-expCl) / expCl;
-        let result = middle *100;
+        let middle = (realClick - expCl) / expCl;
+        let result = middle * 100;
         return result.toFixed(0);
     };
 
@@ -148,20 +147,19 @@ export default class ViewReport extends Component {
             for (let j = 0; j < this.state.allScreen.length; j++) {
                 if (this.state.allScreen[j].id == array[i]) {
                     screens.push(
-                        <div className="col-sm-3 col-xs-6">
-                            <img className="img-responsive portfolio-item" src={this.state.allScreen[j].image} alt=""/>
+                        <div className="col-sm-4 col-xs-6 networks-title">
+                            <img className="img-responsive portfolio-item static-img" src={this.state.allScreen[j].image} alt=""/>
                         </div>
                     );
                 }
             }
 
         }
-        console.log('screen',screens);
         return screens;
     };
 
-    uniqueUsers(a) {
-        return Array.from(new Set(a)).length;
+    uniqueUsers(array) {
+        return Array.from(new Set(array)).length;
     }
 
     render() {
@@ -190,58 +188,80 @@ export default class ViewReport extends Component {
                             <img className="img-responsive main-logo-w" src={this.state.logo} alt=""/>
                         </div>
                         <div className="col-md-4">
-                            <h3>Report Details</h3>
-                            <div className="row">
+                            <h3 className="main-text">Report Details</h3>
+                            <div className="row rep-detail">
                                 <div className="col-md-6"><strong>Customer name </strong></div>
-                                <div className="col-md-6">{this.state.customerName}</div>
+                                <div className="col-md-6"><strong>{this.state.customerName}</strong></div>
                                 <div className="col-md-6"><strong>Start date</strong></div>
-                                <div className="col-md-6">{this.state.startDate}</div>
+                                <div className="col-md-6"><strong>{this.state.startDate}</strong></div>
                                 <div className="col-md-6"><strong>End date</strong></div>
-                                <div className="col-md-6">{this.state.endDate}</div>
+                                <div className="col-md-6"><strong>{this.state.endDate}</strong></div>
                             </div>
                         </div>
                     </div>
-                    <div className="row text-center page-header">
-                        <div className="col-md-4 main-text title-uniq"><strong>{this.uniqueUsers(this.state.uniqueUser)}</strong></div>
-                        <div className="col-md-4 main-text title-uniq"><strong>{this.state.validatedClick.length}</strong></div>
-                        <div className="col-md-4 main-text title-uniq">
-                            <strong>{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</strong>
+                    <div className="body-click ">
+                        <div className="row text-center page-header">
+                            <div className="col-md-4 main-text title-uniq">
+                                <strong>{this.uniqueUsers(this.state.uniqueUser)}</strong></div>
+                            <div className="col-md-4 main-text title-uniq">
+                                <strong>{this.state.validatedClick.length}</strong></div>
+                            <div className="col-md-4 main-text title-uniq">
+                                <strong>{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</strong>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row text-center">
-                        <div className="col-md-4 main-text"><strong>Unique Users</strong></div>
-                        <div className="col-md-4 main-text"><strong>Clicks</strong></div>
-                        <div className="col-md-4 main-text"><strong>Total reaches</strong></div>
-                    </div>
-                    <div className="row text-center budget-row">
-                        <div className="col-md-4"><strong>{this.state.budget} €</strong><p>budget</p></div>
-                        <div className="col-md-4"><strong>{this.state.cpcMax} €</strong><p>cpcMax</p></div>
-                        <div className="col-md-4">
-                            <strong>{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}</strong>
-                            <p>expected clicks</p></div>
-                    </div>
-                    <div className="row text-center budget-row">
-                        <div className="col-md-offset-4 col-md-4">
-                            <strong>{(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
-                                €</strong><p>cpcReal</p></div>
-                        <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>validated clicks</p></div>
-                    </div>
-                    <div className="row text-center budget-row">
-                        <div className="col-md-offset-4 col-md-4">
-                            <strong>{this.cpcPercent(this.state.cpcMax, this.state.validatedClick.length, this.state.budget)} %</strong></div>
-                        <div className="col-md-4">
-                            <strong>{this.clicksPercent(this.state.budget, this.state.cpcMax, this.state.validatedClick.length)} %</strong></div>
+                        <div className="row text-center">
+                            <div className="col-md-4 main-text"><strong>Unique Users</strong></div>
+                            <div className="col-md-4 main-text"><strong>Clicks</strong></div>
+                            <div className="col-md-4 main-text"><strong>Total reaches</strong></div>
+                        </div>
+                        <div className="row text-center budget-row">
+                            <div className="col-md-4"><strong>{this.state.budget} <span
+                                className="glyphicon glyphicon-eur"></span></strong><p>budget</p></div>
+                            <div className="col-md-4"><strong>{this.state.cpcMax} <span
+                                className="glyphicon glyphicon-eur"></span></strong><p>cpcMax</p></div>
+                            <div className="col-md-4">
+                                <strong>{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}</strong>
+                                <p>expected clicks</p></div>
+                        </div>
+                        <div className="row text-center budget-row">
+                            <div className="col-md-offset-4 col-md-4">
+                                <strong>{(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
+                                    <span className="glyphicon glyphicon-eur"></span>
+                                </strong><p>cpcReal</p>
+                            </div>
+                            <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>validated
+                                clicks</p></div>
+                        </div>
+
+                        <div className="row text-center glyph-row main-text">
+                            <div className="col-md-offset-4 col-md-4">
+                                <div className="glyphicon glyphicon-arrow-down "></div>
+                                <p>Reduction CPC</p>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="glyphicon glyphicon-arrow-down"></div>
+                                <p>Earned Clicks</p>
+                            </div>
+                        </div>
+                        <div className="row text-center glyph-click">
+                            <div className="col-md-offset-4 col-md-4">
+                                <strong>{this.cpcPercent(this.state.cpcMax, this.state.validatedClick.length, this.state.budget)}
+                                    %</strong></div>
+                            <div className="col-md-4">
+                                <strong>{this.clicksPercent(this.state.budget, this.state.cpcMax, this.state.validatedClick.length)}
+                                    %</strong></div>
+                        </div>
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
-                            <h3 className="page-header">Facebook Top Posts</h3>
+                            <h3 className="page-header main-text"><strong>Facebook`s Top Posts</strong></h3>
                         </div>
                         {this.displayScreen(this.state.facebookId)}
                     </div>
                     <hr/>
                     <div className="row">
                         <div className="col-lg-12">
-                            <h3 className="page-header">Twitter Top Posts</h3>
+                            <h3 className="page-header main-text"><strong>Twitter`s Top Posts</strong></h3>
                         </div>
                         {this.displayScreen(this.state.twitterId)}
                     </div>
