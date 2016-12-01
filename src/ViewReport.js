@@ -19,7 +19,6 @@ export default class ViewReport extends Component {
             facebookReach: '',
             budget: '',
             cpcMax: '',
-
             campaignsId: [],
             validatedClick: [],
             array: [],
@@ -110,18 +109,20 @@ export default class ViewReport extends Component {
 
     cpcPercent = (bigNumber, clicks, budget)=> {
         if (this.state.cpcMax.length === 0 || this.state.budget.length === 0) return null;
+
+        let cpcReal = (Math.round(parseInt(budget) / parseInt(clicks))).toFixed(2);
         let cpcMax = (Math.round(bigNumber * 100) / 100).toFixed(2);
-        let cpcReal = (Math.round(parseInt(budget) / parseInt(clicks) * 100) / 100).toFixed(2);
-        let middle_result = cpcReal * 100 / cpcMax;
-        let result = 100 - middle_result;
+
+        let middle_result = cpcReal - cpcMax;
+        let result = (middle_result/cpcMax) *100;
         return result.toFixed(0);
     };
 
     clicksPercent = (budget, cpcMax, realClick)=> {
         if (this.state.cpcMax.length === 0 || this.state.budget.length === 0) return null;
         let expCl = (parseInt(budget) / (Math.round(cpcMax * 100) / 100)).toFixed(0);
-        let middle = expCl * 100 / realClick;
-        let result = 100 - middle;
+        let middle = (realClick-expCl) / expCl;
+        let result = middle *100;
         return result.toFixed(0);
     };
 
@@ -159,7 +160,7 @@ export default class ViewReport extends Component {
         return screens;
     };
 
-    uniqUsers(a) {
+    uniqueUsers(a) {
         return Array.from(new Set(a)).length;
     }
 
@@ -168,6 +169,7 @@ export default class ViewReport extends Component {
         // console.log('validate click', this.state.validatedClick);
         // console.log('array', this.state.array);
         // console.log('uniqueUser', this.state.uniqueUser);
+        // console.log('uniqueUser2 ', this.uniqUsers(this.state.uniqueUser));
         return (
             <div>
                 <div className="container">
@@ -200,7 +202,7 @@ export default class ViewReport extends Component {
                         </div>
                     </div>
                     <div className="row text-center page-header">
-                        <div className="col-md-4 main-text title-uniq"><strong>{this.uniqUsers(this.state.uniqueUser)}</strong></div>
+                        <div className="col-md-4 main-text title-uniq"><strong>{this.uniqueUsers(this.state.uniqueUser)}</strong></div>
                         <div className="col-md-4 main-text title-uniq"><strong>{this.state.validatedClick.length}</strong></div>
                         <div className="col-md-4 main-text title-uniq">
                             <strong>{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</strong>
@@ -222,7 +224,7 @@ export default class ViewReport extends Component {
                         <div className="col-md-offset-4 col-md-4">
                             <strong>{(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
                                 €</strong><p>cpcReal</p></div>
-                        <div className="col-md-4"><strong>2650</strong><p>validated clicks</p></div>
+                        <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>validated clicks</p></div>
                     </div>
                     <div className="row text-center budget-row">
                         <div className="col-md-offset-4 col-md-4">
