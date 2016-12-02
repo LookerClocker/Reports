@@ -227,9 +227,22 @@ ul li {
 
 .rep-detail {
     color: #777273;
-    font-size: 19px;
+    font-size: 15px;
 }
 
 .static-img {
     height: 273px;
+}
+
+.networks-detail {
+    color: #444;
+    font-size: 17px;
+    margin-left: 4%;
+}
+
+
+.networks-detail-user {
+    color: #444;
+    font-size: 17px;
+    margin-left: 10%;
 }

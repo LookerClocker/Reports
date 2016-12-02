@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
 
+let facebookProvider = [];
+let twitterProvider = [];
+
 export default class ViewReport extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +24,10 @@ export default class ViewReport extends Component {
             campaignsId: [],
             validatedClick: [],
             array: [],
-            uniqueUser: []
+            uniqueUser: [],
+            providerFacebook: [],
+            providerTwitter: [],
+            generalProviders: []
         }
     }
 
@@ -77,16 +83,27 @@ export default class ViewReport extends Component {
             callback(report);
             self.getClicks(function (item) {
                 self.setState({
+                    providerFacebook: item.map(function (elem) {
+                        return elem.provider;
+                    }),
+
                     validatedClick: item.map(function (elem) {
                         return {
                             id: elem.id
                         }
                     }),
+
                     uniqueUser: item.map(function (elem) {
                         return elem.userId;
+                    }),
+
+                    generalProviders: item.map(function(elem){
+                        return elem.provider;
                     })
                 });
+
             });
+
         });
     };
 
@@ -113,22 +130,25 @@ export default class ViewReport extends Component {
                 query.skip(i);
                 query.find().then(function (click) {
                     allObj = allObj.concat(self.fullFill(click));
-                    self.setState({
-                        validatedClick: allObj
-                    });
-                    callback(allObj);
 
+                    self.setState({
+                        validatedClick: allObj,
+                        generalProviders: allObj,
+                    });
+
+                    callback(allObj);
                 });
             }
-        });
 
+        });
     };
 
     fullFill = (object)=> {
         return object.map(function (elem) {
             return {
                 id: elem.id,
-                userId: elem.get('userId')
+                userId: elem.get('userId'),
+                provider: elem.get('provider')
             }
         })
     };
@@ -175,7 +195,7 @@ export default class ViewReport extends Component {
                 if (this.state.allScreen[j].id == array[i]) {
                     screens.push(
                         <div className="col-sm-4 col-xs-6 networks-title">
-                            <img className="img-responsive portfolio-item static-img" src={this.state.allScreen[j].image} alt=""/>
+                            <img className="img-responsive portfolio-item" src={this.state.allScreen[j].image} alt=""/>
                         </div>
                     );
                 }
@@ -185,9 +205,9 @@ export default class ViewReport extends Component {
         return screens;
     };
 
-    uniqueUsers(array) {
+    uniqueUsers=(array)=> {
         return Array.from(new Set(array)).length;
-    }
+    };
 
     render() {
         return (
@@ -210,14 +230,14 @@ export default class ViewReport extends Component {
                             <img className="img-responsive main-logo-w" src={this.state.logo} alt=""/>
                         </div>
                         <div className="col-md-4">
-                            <h3 className="main-text">Report Details</h3>
+                            <h4 className="main-text">Report Details</h4>
                             <div className="row rep-detail">
-                                <div className="col-md-6"><strong>Customer name </strong></div>
-                                <div className="col-md-6"><strong>{this.state.customerName}</strong></div>
-                                <div className="col-md-6"><strong>Start date</strong></div>
-                                <div className="col-md-6"><strong>{this.state.startDate}</strong></div>
-                                <div className="col-md-6"><strong>End date</strong></div>
-                                <div className="col-md-6"><strong>{this.state.endDate}</strong></div>
+                                <div className="col-md-6">Customer name</div>
+                                <div className="col-md-6">{this.state.customerName}</div>
+                                <div className="col-md-6">Start date</div>
+                                <div className="col-md-6">{this.state.startDate}</div>
+                                <div className="col-md-6">End date</div>
+                                <div className="col-md-6">{this.state.endDate}</div>
                             </div>
                         </div>
                     </div>
@@ -240,7 +260,7 @@ export default class ViewReport extends Component {
                             <div className="col-md-4"><strong>{this.state.budget} <span
                                 className="glyphicon glyphicon-eur"></span></strong><p>budget</p></div>
                             <div className="col-md-4"><strong>{this.state.cpcMax} <span
-                                className="glyphicon glyphicon-eur"></span></strong><p>cpcMax</p></div>
+                                className="glyphicon glyphicon-eur"></span></strong><p>Maximum cost per click</p></div>
                             <div className="col-md-4">
                                 <strong>{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}</strong>
                                 <p>expected clicks</p></div>
@@ -249,7 +269,7 @@ export default class ViewReport extends Component {
                             <div className="col-md-offset-4 col-md-4">
                                 <strong>{(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
                                     <span className="glyphicon glyphicon-eur"></span>
-                                </strong><p>cpcReal</p>
+                                </strong><p>Real cost per click</p>
                             </div>
                             <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>validated
                                 clicks</p></div>
@@ -276,14 +296,18 @@ export default class ViewReport extends Component {
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
-                            <h3 className="page-header main-text"><strong>Facebook`s Top Posts</strong></h3>
+                            <h3 className="page-header main-text"><strong>Facebook`s Top Posts</strong>
+                                <span className="networks-detail-user"> Reaches: {this.state.facebookReach} </span>
+                            </h3>
                         </div>
                         {this.displayScreen(this.state.facebookId)}
                     </div>
                     <hr/>
                     <div className="row">
-                        <div className="col-lg-12">
-                            <h3 className="page-header main-text"><strong>Twitter`s Top Posts</strong></h3>
+                        <div className="col-md-12">
+                            <h3 className="page-header main-text"><strong>Twitter`s Top Posts</strong>
+                                <span className="networks-detail-user"> Reaches: {this.state.twitterReach} </span>
+                            </h3>
                         </div>
                         {this.displayScreen(this.state.twitterId)}
                     </div>

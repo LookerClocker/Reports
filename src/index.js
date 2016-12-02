@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import Router from 'react-router/lib/Router';
-import { browserHistory } from 'react-router';
+import { browserHistory, IndexRedirect} from 'react-router';
 import Route from 'react-router/lib/Route';
 import Reports from './Reports'
 import ViewReport from './ViewReport'
