@@ -25,9 +25,9 @@ export default class ViewReport extends Component {
             validatedClick: [],
             array: [],
             uniqueUser: [],
-            providerFacebook: [],
-            providerTwitter: [],
-            generalProviders: []
+            fbClicks: [],
+            twClicks: [],
+            fbUsers: []
         }
     }
 
@@ -83,10 +83,6 @@ export default class ViewReport extends Component {
             callback(report);
             self.getClicks(function (item) {
                 self.setState({
-                    providerFacebook: item.map(function (elem) {
-                        return elem.provider;
-                    }),
-
                     validatedClick: item.map(function (elem) {
                         return {
                             id: elem.id
@@ -97,13 +93,16 @@ export default class ViewReport extends Component {
                         return elem.userId;
                     }),
 
-                    generalProviders: item.map(function(elem){
-                        return elem.provider;
+                    fbClicks: item.filter(function(elem){
+                        return elem.provider === 'facebook' || elem.provider === 'facebookPage';
+                    }),
+
+                    twClicks: item.filter(function(elem){
+                        return elem.provider === 'twitter';
                     })
+
                 });
-
             });
-
         });
     };
 
@@ -132,8 +131,7 @@ export default class ViewReport extends Component {
                     allObj = allObj.concat(self.fullFill(click));
 
                     self.setState({
-                        validatedClick: allObj,
-                        generalProviders: allObj,
+                        validatedClick: allObj
                     });
 
                     callback(allObj);
@@ -209,6 +207,13 @@ export default class ViewReport extends Component {
         return Array.from(new Set(array)).length;
     };
 
+    uniqueUsersPerNetwork=(networkArray)=>{
+        networkArray = networkArray.map(function(item){
+            return item.userId;
+        });
+        return Array.from(new Set(networkArray)).length;
+    };
+
     render() {
         return (
             <div>
@@ -254,16 +259,16 @@ export default class ViewReport extends Component {
                         <div className="row text-center">
                             <div className="col-md-4 main-text"><strong>Unique Users</strong></div>
                             <div className="col-md-4 main-text"><strong>Clicks</strong></div>
-                            <div className="col-md-4 main-text"><strong>Total reaches</strong></div>
+                            <div className="col-md-4 main-text"><strong>Total reach</strong></div>
                         </div>
                         <div className="row text-center budget-row">
                             <div className="col-md-4"><strong>{this.state.budget} <span
-                                className="glyphicon glyphicon-eur"></span></strong><p>budget</p></div>
+                                className="glyphicon glyphicon-eur"></span></strong><p>Budget</p></div>
                             <div className="col-md-4"><strong>{this.state.cpcMax} <span
                                 className="glyphicon glyphicon-eur"></span></strong><p>Maximum cost per click</p></div>
                             <div className="col-md-4">
                                 <strong>{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}</strong>
-                                <p>expected clicks</p></div>
+                                <p>Expected clicks</p></div>
                         </div>
                         <div className="row text-center budget-row">
                             <div className="col-md-offset-4 col-md-4">
@@ -271,7 +276,7 @@ export default class ViewReport extends Component {
                                     <span className="glyphicon glyphicon-eur"></span>
                                 </strong><p>Real cost per click</p>
                             </div>
-                            <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>validated
+                            <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>Validated
                                 clicks</p></div>
                         </div>
 
@@ -297,7 +302,9 @@ export default class ViewReport extends Component {
                     <div className="row">
                         <div className="col-lg-12">
                             <h3 className="page-header main-text"><strong>Facebook`s Top Posts</strong>
+                                {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.fbClicks)} </span>*/}
                                 <span className="networks-detail-user"> Reaches: {this.state.facebookReach} </span>
+                                <span className="networks-detail"> Clicks: {this.state.fbClicks.length} </span>
                             </h3>
                         </div>
                         {this.displayScreen(this.state.facebookId)}
@@ -306,7 +313,9 @@ export default class ViewReport extends Component {
                     <div className="row">
                         <div className="col-md-12">
                             <h3 className="page-header main-text"><strong>Twitter`s Top Posts</strong>
+                                {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.twClicks)}</span>*/}
                                 <span className="networks-detail-user"> Reaches: {this.state.twitterReach} </span>
+                                <span className="networks-detail"> Clicks: {this.state.twClicks.length} </span>
                             </h3>
                         </div>
                         {this.displayScreen(this.state.twitterId)}
