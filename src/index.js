@@ -19,6 +19,7 @@ Parse.initialize(parseApplicationId, parseJavaScriptKey, parseMasterKey);
 ReactDOM.render(
     <Router history={ browserHistory }>
         <Route path='/' component={ App }>
+            <IndexRedirect to='reports'/>
             <Route path='/' component={ App }/>
             <Route path='reports' component={Reports}/>
             <Route path='new_report' component={ AddReport }/>

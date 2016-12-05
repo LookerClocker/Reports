@@ -29,28 +29,28 @@ var columns = [
         name: 'Start date',
         sortable: true,
         filterable: true,
-        width:100
+        width: 100
     },
     {
         key: 'endDate',
         name: 'End date',
         sortable: true,
         filterable: true,
-        width:100
+        width: 100
     },
     {
         key: 'view',
         name: 'View',
         formatter: ViewLinkReport,
         getRowMetaData: (row) => row.id,
-        width:80
+        width: 80
     },
     {
         key: 'edit',
         name: 'Edit',
         formatter: EditLinkReport,
         getRowMetaData: (row) => row.id,
-        width:80
+        width: 80
     }
 ];
 
@@ -63,7 +63,8 @@ export default class Reports extends Component {
             filters: {},
             sortColumn: null,
             sortDirection: null,
-            height: window.innerHeight
+            height: window.innerHeight,
+            test: ''
         }
     }
 
@@ -151,12 +152,15 @@ export default class Reports extends Component {
     };
 
     render() {
-        return (
+        let checkUser;
+        (Parse.User.current()) ? checkUser = (
             <div>
                 <div className="row">
                     <strong className="total">Total reports: {this.getSize()}</strong>
                     <div className="col-md-2 col-md-offset-9 col-xs-12">
-                       <Link to='/new_report'><button className="btn btn-default add-butt">Add report</button></Link>
+                        <Link to='/new_report'>
+                            <button className="btn btn-default add-butt">Add report</button>
+                        </Link>
                     </div>
                 </div>
                 <ReactDataGrid
@@ -169,6 +173,11 @@ export default class Reports extends Component {
                     toolbar={<Toolbar enableFilter={true}/>}
                     onAddFilter={this.handleFilterChange}
                     onClearFilters={this.onClearFilters}/>
+            </div>
+        ) : '';
+        return (
+            <div>
+                {checkUser}
             </div>
         )
     }
