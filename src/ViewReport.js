@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
-
-let facebookProvider = [];
-let twitterProvider = [];
+let d3 = require('d3');
+let LineChart = require('react-d3-basic').LineChart;
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -214,7 +213,66 @@ export default class ViewReport extends Component {
         return Array.from(new Set(networkArray)).length;
     };
 
+    clickGraph=()=>{
+        let clicks = this.state.validatedClick.length;
+        let data = [
+            {
+                "age": clicks,
+                "index": 0
+            },
+            {
+                "age": clicks,
+                "index": 1
+            },
+            {
+                "age": clicks,
+                "index": 2
+            },
+            {
+                "age": clicks,
+                "index": 4
+            }
+        ];
+
+        let chartSeries = [
+                {
+                    field: 'age',
+                    name: 'Age',
+                    color: '#ff7f0e',
+                    style: {
+                        strokeWidth: 2,
+                        strokeOpacity: 1,
+                        fillOpacity: 1,
+                        color: '#00bcd4'
+                    }
+                }
+            ],
+
+            x = function(d) {
+                return d.index;
+            };
+
+        return (
+                <div>
+                    <div className="past-row">
+                        <ul>
+                            <li className="click-ul click-title">Clicks for the past:</li>
+                            <li className="click-ul">two hours</li>
+                            <li className="click-ul">day</li>
+                            <li className="click-ul">week</li>
+                            <li className="click-ul">month</li>
+                            <li className="click-ul">all time</li>
+                        </ul>
+                    </div>
+                    <div className="co-md-12">
+                        <LineChart width={1000} height={300} data={data} chartSeries={chartSeries} x={x}/>
+                    </div>
+                </div>
+            )
+    };
+
     render() {
+
         return (
             <div>
                 <div className="container">
@@ -298,6 +356,9 @@ export default class ViewReport extends Component {
                                 <strong>{this.clicksPercent(this.state.budget, this.state.cpcMax, this.state.validatedClick.length)}
                                     %</strong></div>
                         </div>
+                    </div>
+                    <div className="row graph-row-main">
+                        {this.clickGraph()}
                     </div>
                     <div className="row">
                         <div className="col-lg-12">

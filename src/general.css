@@ -186,7 +186,7 @@ ul li {
 }
 
 .past-row {
-    left: 47%;
+    left: 41%;
     position: absolute;
 }
 
@@ -245,4 +245,10 @@ ul li {
     color: #444;
     font-size: 17px;
     margin-left: 10%;
+}
+
+.graph-row-main {
+    margin-top: 4%;
+    position: relative;
+    left: -6%;
 }
