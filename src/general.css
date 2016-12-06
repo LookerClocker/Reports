@@ -197,7 +197,18 @@ ul li {
 .main-text {
     color:#d43346
 }
+.main-text-red {
+    cursor: pointer;
+    color:#d43346
+}
+.fb-color {
+    color: #3b5998;
+    cursor: pointer;
+}
 
+.main-text-red:hover, .fb-color:hover {
+    text-decoration: underline;
+}
 .main-logo-w {
     width:80%
 }
@@ -251,4 +262,17 @@ ul li {
     margin-top: 4%;
     position: relative;
     left: -6%;
+}
+
+.twAndfb {
+    color: #00bcd4;
+    cursor: pointer;
+}
+
+.twAndfb:hover{
+    text-decoration: underline;
+}
+.clicks-row {
+    position: relative;
+    left: 12%;
 }

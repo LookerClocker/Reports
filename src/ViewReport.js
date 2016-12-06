@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
-let d3 = require('d3');
-let LineChart = require('react-d3-basic').LineChart;
+
+import {LineChart} from 'react-d3-basic';
+
+let clickGraphDetect;
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -26,7 +28,9 @@ export default class ViewReport extends Component {
             uniqueUser: [],
             fbClicks: [],
             twClicks: [],
-            fbUsers: []
+            fbUsers: [],
+            days: [],
+            clicks: 'all'
         }
     }
 
@@ -72,7 +76,6 @@ export default class ViewReport extends Component {
         }
     };
 
-
     getReport = (callback)=> {
         let self = this;
         let query = new Parse.Query('Report');
@@ -92,12 +95,16 @@ export default class ViewReport extends Component {
                         return elem.userId;
                     }),
 
-                    fbClicks: item.filter(function(elem){
+                    fbClicks: item.filter(function (elem) {
                         return elem.provider === 'facebook' || elem.provider === 'facebookPage';
                     }),
 
-                    twClicks: item.filter(function(elem){
+                    twClicks: item.filter(function (elem) {
                         return elem.provider === 'twitter';
+                    }),
+
+                    days: item.map(function (elem) {
+                        return elem.timestamp;
                     })
 
                 });
@@ -145,7 +152,8 @@ export default class ViewReport extends Component {
             return {
                 id: elem.id,
                 userId: elem.get('userId'),
-                provider: elem.get('provider')
+                provider: elem.get('provider'),
+                timestamp: elem.get('timestamp').toISOString().substring(0, 10),
             }
         })
     };
@@ -202,76 +210,219 @@ export default class ViewReport extends Component {
         return screens;
     };
 
-    uniqueUsers=(array)=> {
+    uniqueUsers = (array)=> {
         return Array.from(new Set(array)).length;
     };
 
-    uniqueUsersPerNetwork=(networkArray)=>{
-        networkArray = networkArray.map(function(item){
+    uniqueUsersPerNetwork = (networkArray)=> {
+        networkArray = networkArray.map(function (item) {
             return item.userId;
         });
         return Array.from(new Set(networkArray)).length;
     };
 
-    clickGraph=()=>{
-        let clicks = this.state.validatedClick.length;
-        let data = [
-            {
-                "age": clicks,
-                "index": 0
+    setTwitterClicks=()=>{
+        this.setState({
+            clicks: 'twitter'
+        });
+    };
+
+    setFacebookClicks=()=>{
+        this.setState({
+            clicks: 'facebook'
+        });
+    };
+
+    setAllClicks=()=>{
+        this.setState({
+            clicks: 'all'
+        });
+    };
+
+    clickGraph = ()=> {
+        let counts = {};
+        let dataForChart = [];
+
+        if (this.state.days.length == 0) return null;
+        this.state.days.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+
+        for (let [key, value] of Object.entries(counts)) {
+            let date = key.split('-');
+            dataForChart.push(
+                {
+                    day: new Date(date[0], date[1], date[2]),
+                    clicks: value
+                }
+            )
+        }
+
+        let x = function (d) {
+                return d.day;
             },
+
+            xLabel = "Date",
+            yLabel = 'Clicks',
+            xScale = 'time';
+
+        let chartSeries = [
             {
-                "age": clicks,
-                "index": 1
-            },
-            {
-                "age": clicks,
-                "index": 2
-            },
-            {
-                "age": clicks,
-                "index": 4
+                field: 'clicks',
+                name: 'Clicks',
+                color: '#d43346',
+                style: {
+                    strokeWidth: 2,
+                    strokeOpacity: 1,
+                    fillOpacity: 1
+                }
             }
         ];
 
-        let chartSeries = [
-                {
-                    field: 'age',
-                    name: 'Age',
-                    color: '#ff7f0e',
-                    style: {
-                        strokeWidth: 2,
-                        strokeOpacity: 1,
-                        fillOpacity: 1,
-                        color: '#00bcd4'
-                    }
-                }
-            ],
+        return (
+            <div>
+                <div className="co-md-12">
+                    <LineChart chartSeries={chartSeries}
+                               width={1330} height={300}
+                               data={dataForChart}
+                               x={x}
+                               xScale={xScale}
+                               xLabel={xLabel}
+                               yLabel={yLabel}
+                    />
+                </div>
+            </div>
+        )
+    };
 
-            x = function(d) {
-                return d.index;
-            };
+    twitterClickGraph = ()=> {
+        let twCounts = {};
+        let twitterDataForChart = [];
+
+        if (this.state.days.length == 0) return null;
+
+        let twDays = this.state.twClicks.map(function(days){
+            return days.timestamp;
+        });
+
+        twDays.forEach(function(x) { twCounts[x] = (twCounts[x] || 0)+1; });
+
+        for (let [key, value] of Object.entries(twCounts)) {
+            let date = key.split('-');
+            twitterDataForChart.push(
+                {
+                    day: new Date(date[0], date[1], date[2]),
+                    clicks: value
+                }
+            )
+        }
+
+
+        let x = function (d) {
+                return d.day;
+            },
+
+            xLabel = "Date",
+            yLabel = 'Clicks',
+            xScale = 'time';
+
+        let chartSeries = [
+            {
+                field: 'clicks',
+                name: 'Clicks',
+                color: '#00bcd4',
+                style: {
+                    strokeWidth: 2,
+                    strokeOpacity: 1,
+                    fillOpacity: 1
+                }
+            }
+        ];
 
         return (
-                <div>
-                    <div className="past-row">
-                        <ul>
-                            <li className="click-ul click-title">Clicks for the past:</li>
-                            <li className="click-ul">two hours</li>
-                            <li className="click-ul">day</li>
-                            <li className="click-ul">week</li>
-                            <li className="click-ul">month</li>
-                            <li className="click-ul">all time</li>
-                        </ul>
-                    </div>
-                    <div className="co-md-12">
-                        <LineChart width={1000} height={300} data={data} chartSeries={chartSeries} x={x}/>
-                    </div>
+            <div>
+                <div className="co-md-12">
+                    <LineChart chartSeries={chartSeries}
+                               width={1330} height={300}
+                               data={twitterDataForChart}
+                               x={x}
+                               xScale={xScale}
+                               xLabel={xLabel}
+                               yLabel={yLabel}
+                    />
                 </div>
+            </div>
+        )
+    };
+
+    facebookClickGraph = ()=> {
+        let fbCounts = {};
+        let facebookDataForChart = [];
+
+        if (this.state.days.length == 0) return null;
+
+        let fbDays = this.state.fbClicks.map(function(days){
+            return days.timestamp;
+        });
+
+        fbDays.forEach(function(x) { fbCounts[x] = (fbCounts[x] || 0)+1; });
+
+        for (let [key, value] of Object.entries(fbCounts)) {
+            let date = key.split('-');
+            facebookDataForChart.push(
+                {
+                    day: new Date(date[0], date[1], date[2]),
+                    clicks: value
+                }
             )
+        }
+
+
+        let x = function (d) {
+                return d.day;
+            },
+
+            xLabel = "Date",
+            yLabel = 'Clicks',
+            xScale = 'time';
+
+        let chartSeries = [
+            {
+                field: 'clicks',
+                name: 'Clicks',
+                color: '#3b5998',
+                style: {
+                    strokeWidth: 2,
+                    strokeOpacity: 1,
+                    fillOpacity: 1
+                }
+            }
+        ];
+
+        return (
+            <div>
+                <div className="co-md-12">
+                    <LineChart chartSeries={chartSeries}
+                               width={1330} height={300}
+                               data={facebookDataForChart}
+                               x={x}
+                               xScale={xScale}
+                               xLabel={xLabel}
+                               yLabel={yLabel}
+                    />
+                </div>
+            </div>
+        )
     };
 
     render() {
+        if(this.state.clicks == 'all'){
+            clickGraphDetect = this.clickGraph();
+        }
+        else if (this.state.clicks == 'twitter') {
+            clickGraphDetect = this.twitterClickGraph();
+        }
+        else if (this.state.clicks == 'facebook') {
+            clickGraphDetect = this.facebookClickGraph();
+        }
 
         return (
             <div>
@@ -358,13 +509,19 @@ export default class ViewReport extends Component {
                         </div>
                     </div>
                     <div className="row graph-row-main">
-                        {this.clickGraph()}
+                        <div className="row clicks-row">
+                            <div className="col-md-offset-7 col-md-1 text-center"><span className="main-text-red" onClick={this.setAllClicks}>All clicks</span></div>
+                            <div className="col-md-2 text-center"><span className="fb-color" onClick={this.setFacebookClicks}>Facebook clicks</span></div>
+                            <div className="col-md-2"><span className="twAndfb" onClick={this.setTwitterClicks}>Twitter clicks</span></div>
+                        </div>
+
+                        {clickGraphDetect}
                     </div>
                     <div className="row">
                         <div className="col-lg-12">
                             <h3 className="page-header main-text"><strong>Facebook`s Top Posts</strong>
                                 {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.fbClicks)} </span>*/}
-                                <span className="networks-detail-user"> Reaches: {this.state.facebookReach} </span>
+                                <span className="networks-detail-user"> Reach: {this.state.facebookReach} </span>
                                 <span className="networks-detail"> Clicks: {this.state.fbClicks.length} </span>
                             </h3>
                         </div>
@@ -375,7 +532,7 @@ export default class ViewReport extends Component {
                         <div className="col-md-12">
                             <h3 className="page-header main-text"><strong>Twitter`s Top Posts</strong>
                                 {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.twClicks)}</span>*/}
-                                <span className="networks-detail-user"> Reaches: {this.state.twitterReach} </span>
+                                <span className="networks-detail-user"> Reach: {this.state.twitterReach} </span>
                                 <span className="networks-detail"> Clicks: {this.state.twClicks.length} </span>
                             </h3>
                         </div>
