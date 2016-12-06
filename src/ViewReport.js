@@ -3,6 +3,8 @@ let Parse = require('parse').Parse;
 
 import {LineChart} from 'react-d3-basic';
 
+var LineTooltip = require('react-d3-tooltip').LineTooltip;
+
 let clickGraphDetect;
 
 export default class ViewReport extends Component {
@@ -221,19 +223,19 @@ export default class ViewReport extends Component {
         return Array.from(new Set(networkArray)).length;
     };
 
-    setTwitterClicks=()=>{
+    setTwitterClicks = ()=> {
         this.setState({
             clicks: 'twitter'
         });
     };
 
-    setFacebookClicks=()=>{
+    setFacebookClicks = ()=> {
         this.setState({
             clicks: 'facebook'
         });
     };
 
-    setAllClicks=()=>{
+    setAllClicks = ()=> {
         this.setState({
             clicks: 'all'
         });
@@ -244,7 +246,9 @@ export default class ViewReport extends Component {
         let dataForChart = [];
 
         if (this.state.days.length == 0) return null;
-        this.state.days.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
+        this.state.days.forEach(function (x) {
+            counts[x] = (counts[x] || 0) + 1;
+        });
 
         for (let [key, value] of Object.entries(counts)) {
             let date = key.split('-');
@@ -270,7 +274,7 @@ export default class ViewReport extends Component {
                 name: 'Clicks',
                 color: '#d43346',
                 style: {
-                    strokeWidth: 2,
+                    strokeWidth: 3,
                     strokeOpacity: 1,
                     fillOpacity: 1
                 }
@@ -279,14 +283,14 @@ export default class ViewReport extends Component {
 
         return (
             <div>
-                <div className="co-md-12">
-                    <LineChart chartSeries={chartSeries}
-                               width={1330} height={300}
-                               data={dataForChart}
-                               x={x}
-                               xScale={xScale}
-                               xLabel={xLabel}
-                               yLabel={yLabel}
+                <div className="co-md-12 after-click-row">
+                    <LineTooltip chartSeries={chartSeries}
+                                 width={1330} height={300}
+                                 data={dataForChart}
+                                 x={x}
+                                 xScale={xScale}
+                                 xLabel={xLabel}
+                                 yLabel={yLabel}
                     />
                 </div>
             </div>
@@ -299,11 +303,13 @@ export default class ViewReport extends Component {
 
         if (this.state.days.length == 0) return null;
 
-        let twDays = this.state.twClicks.map(function(days){
+        let twDays = this.state.twClicks.map(function (days) {
             return days.timestamp;
         });
 
-        twDays.forEach(function(x) { twCounts[x] = (twCounts[x] || 0)+1; });
+        twDays.forEach(function (x) {
+            twCounts[x] = (twCounts[x] || 0) + 1;
+        });
 
         for (let [key, value] of Object.entries(twCounts)) {
             let date = key.split('-');
@@ -330,7 +336,7 @@ export default class ViewReport extends Component {
                 name: 'Clicks',
                 color: '#00bcd4',
                 style: {
-                    strokeWidth: 2,
+                    strokeWidth: 3,
                     strokeOpacity: 1,
                     fillOpacity: 1
                 }
@@ -339,14 +345,14 @@ export default class ViewReport extends Component {
 
         return (
             <div>
-                <div className="co-md-12">
-                    <LineChart chartSeries={chartSeries}
-                               width={1330} height={300}
-                               data={twitterDataForChart}
-                               x={x}
-                               xScale={xScale}
-                               xLabel={xLabel}
-                               yLabel={yLabel}
+                <div className="co-md-12 after-click-row">
+                    <LineTooltip chartSeries={chartSeries}
+                                 width={1330} height={300}
+                                 data={twitterDataForChart}
+                                 x={x}
+                                 xScale={xScale}
+                                 xLabel={xLabel}
+                                 yLabel={yLabel}
                     />
                 </div>
             </div>
@@ -359,11 +365,13 @@ export default class ViewReport extends Component {
 
         if (this.state.days.length == 0) return null;
 
-        let fbDays = this.state.fbClicks.map(function(days){
+        let fbDays = this.state.fbClicks.map(function (days) {
             return days.timestamp;
         });
 
-        fbDays.forEach(function(x) { fbCounts[x] = (fbCounts[x] || 0)+1; });
+        fbDays.forEach(function (x) {
+            fbCounts[x] = (fbCounts[x] || 0) + 1;
+        });
 
         for (let [key, value] of Object.entries(fbCounts)) {
             let date = key.split('-');
@@ -390,7 +398,7 @@ export default class ViewReport extends Component {
                 name: 'Clicks',
                 color: '#3b5998',
                 style: {
-                    strokeWidth: 2,
+                    strokeWidth: 3,
                     strokeOpacity: 1,
                     fillOpacity: 1
                 }
@@ -399,14 +407,14 @@ export default class ViewReport extends Component {
 
         return (
             <div>
-                <div className="co-md-12">
-                    <LineChart chartSeries={chartSeries}
-                               width={1330} height={300}
-                               data={facebookDataForChart}
-                               x={x}
-                               xScale={xScale}
-                               xLabel={xLabel}
-                               yLabel={yLabel}
+                <div className="co-md-12 after-click-row">
+                    <LineTooltip chartSeries={chartSeries}
+                                 width={1330} height={300}
+                                 data={facebookDataForChart}
+                                 x={x}
+                                 xScale={xScale}
+                                 xLabel={xLabel}
+                                 yLabel={yLabel}
                     />
                 </div>
             </div>
@@ -414,7 +422,7 @@ export default class ViewReport extends Component {
     };
 
     render() {
-        if(this.state.clicks == 'all'){
+        if (this.state.clicks == 'all') {
             clickGraphDetect = this.clickGraph();
         }
         else if (this.state.clicks == 'twitter') {
@@ -510,9 +518,14 @@ export default class ViewReport extends Component {
                     </div>
                     <div className="row graph-row-main">
                         <div className="row clicks-row">
-                            <div className="col-md-offset-7 col-md-1 text-center"><span className="main-text-red" onClick={this.setAllClicks}>All clicks</span></div>
-                            <div className="col-md-2 text-center"><span className="fb-color" onClick={this.setFacebookClicks}>Facebook clicks</span></div>
-                            <div className="col-md-2"><span className="twAndfb" onClick={this.setTwitterClicks}>Twitter clicks</span></div>
+                            <div className="col-md-offset-7 col-md-1 text-center"><span className="main-text-red"
+                                                                                        onClick={this.setAllClicks}>All clicks</span>
+                            </div>
+                            <div className="col-md-2 text-center"><span className="fb-color"
+                                                                        onClick={this.setFacebookClicks}>Facebook clicks</span>
+                            </div>
+                            <div className="col-md-2"><span className="twAndfb" onClick={this.setTwitterClicks}>Twitter clicks</span>
+                            </div>
                         </div>
 
                         {clickGraphDetect}

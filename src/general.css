@@ -275,4 +275,10 @@ ul li {
 .clicks-row {
     position: relative;
     left: 12%;
+    z-index: 100;
+}
+
+.after-click-row {
+    position: relative;
+    bottom: 63px;
 }
