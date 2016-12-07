@@ -8,7 +8,6 @@ import '../node_modules/dropzone/dist/min/dropzone.min.css'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import ReportConfirm from './SuccessDialog';
-import FilteredMultiSelect from 'react-filtered-multiselect';
 let Parse = require('parse').Parse;
 let clickedCampArray = [];
 let fbImageCollection = [];
@@ -48,7 +47,7 @@ const BOOTSTRAP_CLASSES = {
     select: 'form-control',
     button: 'btn btn btn-block btn-default',
     buttonActive: 'btn btn btn-block btn-primary'
-}
+};
 
 export default class AddReport extends Component {
     constructor(props) {
@@ -91,10 +90,7 @@ export default class AddReport extends Component {
             twitterReach: '',
             facebookReach: '',
             budget: '',
-            cpcMax: '',
-
-            blackList: [],
-            selectedBlackUsers: []
+            cpcMax: ''
         }
     }
 
@@ -129,12 +125,6 @@ export default class AddReport extends Component {
                 campaigns: items
             });
         });
-
-        // this.getMembers(function (items) {
-        //     self.setState({
-        //         blackList: items
-        //     });
-        // });
 
         this.setState({
             facebookScreen: fbImageCollection,
@@ -176,49 +166,6 @@ export default class AddReport extends Component {
             });
             callback(self.state.campaigns);
         });
-    };
-
-    getMembers(callback) {
-        let self = this;
-        let query = new Parse.Query('Member');
-        query.count().then(function (number) {
-            query.limit(1000);
-            query.skip(0);
-            query.addAscending('createdAt');
-            let allObj = [];
-
-            for (let i = 0; i <= number; i += 1000) {
-                query.skip(i);
-                query.find().then(function (members) {
-                    allObj = allObj.concat(self.fullFillMembers(members));
-                    // self.setState({
-                    //     blackList: allObj,
-                    // });
-                    callback(allObj);
-                });
-            }
-        });
-
-    };
-
-    fullFillMembers = (object)=> {
-        return object.map(function (elem) {
-            return {
-                id: elem.id,
-                firstName: elem.get('firstName'),
-                lastName: elem.get('lastName'),
-            }
-        })
-    };
-
-    handleDeselect=(index)=> {
-        let selectedShips = this.state.selectedBlackUsers.slice();
-        selectedShips.splice(index, 1);
-        this.setState({selectedBlackUsers: selectedShips})
-    };
-
-    handleSelectionChange=(selectedShips)=> {
-        this.setState({selectedBlackUsers: selectedShips})
     };
 
     handleChange = (event, index, value) => {
@@ -660,32 +607,6 @@ export default class AddReport extends Component {
                                 </input>
                             </div>
                         </div>
-                        {/*<div className="row networks-row">*/}
-                            {/*<div className="col-md-2">*/}
-                                {/*<strong>Black list</strong>*/}
-                            {/*</div>*/}
-                            {/*<div className="col-md-4">*/}
-                                {/*<FilteredMultiSelect*/}
-                                    {/*classNames={BOOTSTRAP_CLASSES}*/}
-                                    {/*onChange={this.handleSelectionChange}*/}
-                                    {/*options={this.state.blackList}*/}
-                                    {/*selectedOptions={this.state.selectedBlackUsers}*/}
-                                    {/*textProp="firstName"*/}
-                                    {/*valueProp="id"*/}
-                                {/*/>*/}
-                            {/*</div>*/}
-                            {/*<div className="col-md-4">*/}
-                                {/*{this.state.selectedBlackUsers.length === 0 && <p>(nothing selected yet)</p>}*/}
-                                {/*{this.state.selectedBlackUsers.length > 0 && <ul className="list">*/}
-                                    {/*{this.state.selectedBlackUsers.map((user, i) => <li key={user.id}>*/}
-                                        {/*{`${user.firstName} `}*/}
-                                        {/*<button className="pull-right" type="button" onClick={this.handleDeselect.bind(null, i)}>*/}
-                                            {/*&times;*/}
-                                        {/*</button>*/}
-                                    {/*</li>)}*/}
-                                {/*</ul>}*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
                     </div>
                 </div>
                 <div className="row dates">
