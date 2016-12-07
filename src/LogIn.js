@@ -40,7 +40,7 @@ export default class LogIn extends Component {
         });
 
         this.setState({
-            password: '',
+            password: ''
         });
     };
 
@@ -61,7 +61,7 @@ export default class LogIn extends Component {
     };
 
     handleClose = () => {
-        this.setState({open: false});
+        this.setState({open: false, dialogTitle: 'Type your password'});
     };
 
     render() {
