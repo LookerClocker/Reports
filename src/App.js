@@ -15,7 +15,7 @@ export default class App extends Component {
     constructor(props){
         super(props);
         this.state={
-            title: "Value Your Network. Report's back office / "
+            title: "VYN-Report | "
         };
     }
 
@@ -34,7 +34,7 @@ export default class App extends Component {
             : ( window.location.href.split('/')[3] == 'view_report') ? segment = 'view report' : segment = window.location.href.split('/').pop();
         return (
             <div className="container-fluid">
-                <AppBar title={this.state.title + segment} iconElementRight={<LogIn/>}/>
+                <AppBar iconClassNameLeft="hide-app-bar" title={this.state.title + segment} iconElementRight={<LogIn/>}/>
                 {this.props.children}
             </div>
         );

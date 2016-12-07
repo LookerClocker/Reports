@@ -50,7 +50,7 @@ export default class LogIn extends Component {
             Parse.User.logOut().then(function () {
                 console.log('success logout');
                 self.setState({userState: 'Login'});
-                self.context.router.replace('/');
+                self.context.router.replace('/logout');
             }, function (error) {
                 console.log('error');
             });

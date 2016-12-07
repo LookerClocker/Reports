@@ -7,6 +7,7 @@ import Route from 'react-router/lib/Route';
 import Reports from './Reports'
 import ViewReport from './ViewReport'
 import AddReport from './AddReport';
+import Logout from './Logout';
 
 let Parse = require('parse').Parse;
 let parseApplicationId = 'VYN-BO';
@@ -26,16 +27,18 @@ Parse.initialize(parseApplicationId, parseJavaScriptKey, parseMasterKey);
                 <Route path='new_report' component={ AddReport }/>
                 <Route path='edit_report/:id' component={ AddReport }/>
                 <Route path='view_report/:id' component={ViewReport}/>
+                <Route path='logout' component={Logout}/>
             </Route>
         </Router>,
         document.getElementById('root'))) : viewAdmin = (
     ReactDOM.render(
         <Router history={ browserHistory }>
             <Route path='/' component={ App }>
-                <IndexRedirect to='reports'/>
+                <IndexRedirect to='logout'/>
                 <Route path='reports' component={Reports}/>
                 <Route path='new_report' component={ AddReport }/>
                 <Route path='edit_report/:id' component={ AddReport }/>
+                <Route path='logout' component={Logout}/>
             </Route>
             <Route>
                 <Route path='view_report/:id' component={ViewReport}/>

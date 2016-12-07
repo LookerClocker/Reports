@@ -15,7 +15,7 @@
 .total {
     position:absolute;
     top: 85px;
-    left: 21px;
+    left: 11px;
 }
 
 .img-preview {
@@ -291,4 +291,24 @@ div.filepicker {
 }
 .list {
     list-style: none;
+}
+
+.hide-app-bar {
+    display: none;
+    cursor: auto;
+}
+
+.logOut {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    height: 436px;
+    font-size: 49px;
+    color: #ccc;
 }
