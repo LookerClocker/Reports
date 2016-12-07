@@ -284,7 +284,16 @@ export default class ViewReport extends Component {
         return (
             <div>
                 <div className="co-md-12 after-click-row">
-                    <LineTooltip chartSeries={chartSeries}
+                    <LineChart chartSeries={chartSeries}
+                                 viewBoxObject={{
+                                     x: 0,
+                                     y: 0,
+                                     width: 500,
+                                     height: 400
+                                 }}
+                                 title="Line Chart"
+                                 yAxisLabel="Altitude"
+                                 xAxisLabel="Elapsed Time (sec)"
                                  width={1330} height={300}
                                  data={dataForChart}
                                  x={x}
@@ -346,7 +355,7 @@ export default class ViewReport extends Component {
         return (
             <div>
                 <div className="co-md-12 after-click-row">
-                    <LineTooltip chartSeries={chartSeries}
+                    <LineChart chartSeries={chartSeries}
                                  width={1330} height={300}
                                  data={twitterDataForChart}
                                  x={x}
@@ -408,7 +417,7 @@ export default class ViewReport extends Component {
         return (
             <div>
                 <div className="co-md-12 after-click-row">
-                    <LineTooltip chartSeries={chartSeries}
+                    <LineChart chartSeries={chartSeries}
                                  width={1330} height={300}
                                  data={facebookDataForChart}
                                  x={x}

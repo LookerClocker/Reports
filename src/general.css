@@ -151,10 +151,10 @@ div.filepicker {
     font-weight: bold;
 }
 
-ul li {
-    color: #00bcd4;
-    cursor: pointer;
-}
+/*ul li {*/
+    /*color: #00bcd4;*/
+    /*cursor: pointer;*/
+/*}*/
 
 .clicks-box {
     top: -13px;
@@ -276,9 +276,19 @@ ul li {
     position: relative;
     left: 12%;
     z-index: 100;
+
+    margin-top: 2%;
+    margin-bottom: 4%;
 }
 
 .after-click-row {
     position: relative;
     bottom: 63px;
+}
+
+.deselectButton {
+    margin-left: 18%;
+}
+.list {
+    list-style: none;
 }
