@@ -1,11 +1,32 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
-
 import {LineChart} from 'react-d3-basic';
-
-var LineTooltip = require('react-d3-tooltip').LineTooltip;
-
+import Toggle from 'material-ui/Toggle';
+let LineTooltip = require('react-d3-tooltip').LineTooltip;
 let clickGraphDetect;
+const styles = {
+    block: {
+        maxWidth: 250,
+    },
+    toggle: {
+        marginBottom: 16,
+    },
+    thumbOff: {
+        backgroundColor: '#ffcccc',
+    },
+    trackOff: {
+        backgroundColor: '#ff9d9d',
+    },
+    thumbSwitched: {
+        backgroundColor: '#d43346',
+    },
+    trackSwitched: {
+        backgroundColor: '#ff9d9d',
+    },
+    labelStyle: {
+        color: 'rgb(114,105,106)'
+    }
+};
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -32,7 +53,10 @@ export default class ViewReport extends Component {
             twClicks: [],
             fbUsers: [],
             days: [],
-            clicks: 'all'
+            clicks: 'all',
+            showFacebook: true,
+            showTwitter: true,
+            allScreens: true
         }
     }
 
@@ -405,7 +429,7 @@ export default class ViewReport extends Component {
             {
                 field: 'clicks',
                 name: 'Clicks',
-                color: '#3b5998',
+                color: 'rgb(54,120,155)',
                 style: {
                     strokeWidth: 3,
                     strokeOpacity: 1,
@@ -428,6 +452,33 @@ export default class ViewReport extends Component {
                 </div>
             </div>
         )
+    };
+
+    seeFacebookScreen=()=>{
+        if(this.state.showFacebook) {
+            this.setState({
+                showFacebook: false,
+                showTwitter: true
+            });
+        }
+    };
+
+    seeTwitterScreen=()=>{
+        if(this.state.showTwitter) {
+            this.setState({
+                showTwitter: false,
+                showFacebook: true
+            });
+        }
+    };
+
+    seeAllScreen=()=>{
+        if(this.state.allScreens) {
+            this.setState({
+                showTwitter: true,
+                showFacebook: true
+            });
+        }
     };
 
     render() {
@@ -461,8 +512,8 @@ export default class ViewReport extends Component {
                             <img className="img-responsive main-logo-w" src={this.state.logo} alt=""/>
                         </div>
                         <div className="col-md-4">
-                            <h4 className="main-text">Report Details</h4>
-                            <div className="row rep-detail">
+                            <span className="main-text  detail-report">Report Details</span>
+                            <div className="row rep-detail mrt-5">
                                 <div className="col-md-6">Customer name</div>
                                 <div className="col-md-6">{this.state.customerName}</div>
                                 <div className="col-md-6">Start date</div>
@@ -472,57 +523,64 @@ export default class ViewReport extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="body-click ">
-                        <div className="row text-center page-header">
-                            <div className="col-md-4 main-text title-uniq">
-                                <strong>{this.uniqueUsers(this.state.uniqueUser)}</strong></div>
-                            <div className="col-md-4 main-text title-uniq">
-                                <strong>{this.state.validatedClick.length}</strong></div>
-                            <div className="col-md-4 main-text title-uniq">
-                                <strong>{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</strong>
-                            </div>
+                    <div className="row">
+                        <div className="col-md-12 conversation">
+                            Conversation
                         </div>
-                        <div className="row text-center">
-                            <div className="col-md-4 main-text"><strong>Unique Users</strong></div>
-                            <div className="col-md-4 main-text"><strong>Clicks</strong></div>
-                            <div className="col-md-4 main-text"><strong>Total reach</strong></div>
-                        </div>
-                        <div className="row text-center budget-row">
-                            <div className="col-md-4"><strong>{this.state.budget} <span
-                                className="glyphicon glyphicon-eur"></span></strong><p>Budget</p></div>
-                            <div className="col-md-4"><strong>{this.state.cpcMax} <span
-                                className="glyphicon glyphicon-eur"></span></strong><p>Maximum cost per click</p></div>
-                            <div className="col-md-4">
-                                <strong>{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}</strong>
-                                <p>Expected clicks</p></div>
-                        </div>
-                        <div className="row text-center budget-row">
-                            <div className="col-md-offset-4 col-md-4">
-                                <strong>{(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
-                                    <span className="glyphicon glyphicon-eur"></span>
-                                </strong><p>Real cost per click</p>
-                            </div>
-                            <div className="col-md-4"><strong>{this.state.validatedClick.length}</strong><p>Validated
-                                clicks</p></div>
-                        </div>
-
-                        <div className="row text-center glyph-row main-text">
-                            <div className="col-md-offset-4 col-md-4">
-                                <div className="glyphicon glyphicon-arrow-down "></div>
-                                <p>Reduction CPC</p>
-                            </div>
-                            <div className="col-md-4">
-                                <div className="glyphicon glyphicon-arrow-down"></div>
-                                <p>Earned Clicks</p>
-                            </div>
-                        </div>
-                        <div className="row text-center glyph-click">
-                            <div className="col-md-offset-4 col-md-4">
-                                <strong>{this.cpcPercent(this.state.cpcMax, this.state.validatedClick.length, this.state.budget)}
-                                    %</strong></div>
-                            <div className="col-md-4">
-                                <strong>{this.clicksPercent(this.state.budget, this.state.cpcMax, this.state.validatedClick.length)}
-                                    %</strong></div>
+                    </div>
+                    <div className="table-responsive text-center">
+                        <table className="table table-striped">
+                            <thead>
+                            <tr>
+                                <th className="text-center  pad-td reach-color">
+                                    <div className="reach">{this.uniqueUsers(this.state.uniqueUser)}</div><div className="weight">Unique Users</div>
+                                </th>
+                                <th className="text-center  pad-td reach-color">
+                                    <div className="reach">{this.state.validatedClick.length}</div><div className="weight">Clicks</div>
+                                </th>
+                                <th className="text-center  pad-td reach-color">
+                                    <div className="reach">{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</div><div className="weight">Total reach</div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td className="pad-td main-color">{this.state.budget}
+                                <span className="glyphicon glyphicon-eur">&nbsp;</span><div>Budget</div></td>
+                                <td className="pad-td main-color">{this.state.cpcMax} <span className="glyphicon glyphicon-eur">&nbsp;</span><div>Maximum cost per click</div></td>
+                                <td className="pad-td main-color">{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}<div>Expected clicks</div></td>
+                            </tr>
+                            <tr>
+                                <td className="pad-td main-color">&nbsp;</td>
+                                <td className="pad-td main-color">
+                                    {(Math.round(parseInt(this.state.budget) / parseInt(this.state.validatedClick.length) * 100) / 100).toFixed(2)}
+                                    <span className="glyphicon glyphicon-eur">&nbsp;</span>
+                                    <div>Real cost per click</div>
+                                </td>
+                                <td className="pad-td main-color">{this.state.validatedClick.length}<div>Validated clicks</div></td>
+                            </tr>
+                            <tr>
+                                <td className="pad-td main-color">&nbsp;</td>
+                                <td className="pad-td main-color">
+                                    <div className="glyphicon glyphicon-arrow-down"></div>
+                                    <div>Reduction cost per click</div>
+                                </td>
+                                <td className="pad-td main-color">
+                                    <div className="glyphicon glyphicon-arrow-down"></div>
+                                    <div>Earned Clicks</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td className="pad-td main-color">&nbsp;</td>
+                                <td className="pad-td main-color">{this.cpcPercent(this.state.cpcMax, this.state.validatedClick.length, this.state.budget)}%</td>
+                                <td className="pad-td main-color">{this.clicksPercent(this.state.budget, this.state.cpcMax, this.state.validatedClick.length)}%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-12 timeline">
+                            Timeline
                         </div>
                     </div>
                     <div className="row graph-row-main">
@@ -539,28 +597,47 @@ export default class ViewReport extends Component {
 
                         {clickGraphDetect}
                     </div>
-                    <div className="row">
-                        <div className="col-lg-12">
-                            <h3 className="page-header main-text"><strong>Facebook`s Top Posts</strong>
-                                {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.fbClicks)} </span>*/}
-                                <span className="networks-detail-user"> Reach: {this.state.facebookReach} </span>
-                                <span className="networks-detail"> Clicks: {this.state.fbClicks.length} </span>
-                            </h3>
+                    <div className="row posts">
+                        <div className="col-md-2 timeline">
+                            Posts
                         </div>
-                        {this.displayScreen(this.state.facebookId)}
-                    </div>
-                    <hr/>
-                    <div className="row">
-                        <div className="col-md-12">
-                            <h3 className="page-header main-text"><strong>Twitter`s Top Posts</strong>
-                                {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.twClicks)}</span>*/}
-                                <span className="networks-detail-user"> Reach: {this.state.twitterReach} </span>
-                                <span className="networks-detail"> Clicks: {this.state.twClicks.length} </span>
-                            </h3>
+                        <div className="col-md-1 text-center">
+                           <span className="gray" onClick={this.seeAllScreen}>All</span>
                         </div>
-                        {this.displayScreen(this.state.twitterId)}
+                        <div className="col-md-1">
+                            <span className="gray" onClick={this.seeTwitterScreen}>Facebook</span>
+                        </div>
+                        <div className="col-md-1">
+                            <span className="gray" onClick={this.seeFacebookScreen}>Twitter</span>
+                        </div>
                     </div>
-                    <hr/>
+                    {this.state.showFacebook ?
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <div className="page-header main-text postTitle">Facebook`s Top Posts
+                                    {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.fbClicks)} </span>*/}
+                                    <span className="networks-detail-user"> Reach: {this.state.facebookReach} </span>
+                                    <span className="networks-detail"> Clicks: {this.state.fbClicks.length} </span>
+                                </div>
+                            </div>
+                            {this.displayScreen(this.state.facebookId)}
+                            <hr/>
+                        </div>
+                        : null }
+
+                    {this.state.showTwitter ?
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="page-header main-text postTitle">Twitter`s Top Posts
+                                    {/*<span className="networks-detail-user"> Users: {this.uniqueUsersPerNetwork(this.state.twClicks)}</span>*/}
+                                    <span className="twit-post-det"> Reach: {this.state.twitterReach} </span>
+                                    <span className="networks-detail"> Clicks: {this.state.twClicks.length} </span>
+                                </div>
+                            </div>
+                            {this.displayScreen(this.state.twitterId)}
+                        </div> : null}
+
+                       <hr/>
                     <footer>
                     </footer>
                 </div>

@@ -202,7 +202,7 @@ div.filepicker {
     color:#d43346
 }
 .fb-color {
-    color: #3b5998;
+    color: rgb(54,120,155);
     cursor: pointer;
 }
 
@@ -237,8 +237,9 @@ div.filepicker {
 }
 
 .rep-detail {
-    color: #777273;
+    /*color: rgb(141,127,124);*/
     font-size: 15px;
+    color: rgb(114,105,106);
 }
 
 .static-img {
@@ -246,16 +247,26 @@ div.filepicker {
 }
 
 .networks-detail {
-    color: #444;
+    color: rgb(114,105,106);
     font-size: 17px;
     margin-left: 4%;
 }
 
 
 .networks-detail-user {
-    color: #444;
+    color: rgb(114,105,106);
     font-size: 17px;
     margin-left: 10%;
+}
+
+.twit-post-det {
+    color: rgb(114,105,106);
+    font-size: 17px;
+    margin-left: 11.5%;
+}
+
+.postTitle {
+    font-size:17px;
 }
 
 .graph-row-main {
@@ -277,7 +288,7 @@ div.filepicker {
     left: 12%;
     z-index: 100;
 
-    margin-top: 2%;
+    /*margin-top: 2%;*/
     margin-bottom: 4%;
 }
 
@@ -311,4 +322,81 @@ div.filepicker {
     height: 436px;
     font-size: 49px;
     color: #ccc;
+}
+
+.pad-td {
+    padding: 2% !important;
+}
+
+.title-color {
+    color: rgb(31,105,118);
+}
+
+/*.main-color {*/
+    /*color: rgb(25,38,31);*/
+/*}*/
+
+.main-color {
+    /*color: rgb(54,120,155);*/
+    /*color: #000;*/
+    color: rgb(114,105,106);
+}
+
+
+
+.conversation {
+    margin-top: 5%;
+    margin-bottom: 1%;
+    font-size: 22px;
+    /*color: rgb(141,127,124);*/
+    color: #d43346;
+}
+
+.timeline {
+    font-size: 22px;
+    /*color: rgb(141,127,124);*/
+    color: #d43346;
+}
+
+.gray {
+    color: rgb(114,105,106);
+}
+.gray:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #d43346;
+}
+
+.reach-color {
+    /*color: rgb(54, 136, 158)*/
+    color: #000;
+}
+
+
+.reach {
+    font-size: 25px;
+    /*color: rgb(54, 136, 158)*/
+    color: #000;
+}
+
+.weight {
+    font-weight: 100;
+}
+
+.mrt-5 {
+    margin-top: 5%;
+}
+
+.detail-report {
+    font-size: 22px;
+}
+
+.posts {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 15px;
 }
