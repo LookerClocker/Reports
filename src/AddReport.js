@@ -14,6 +14,7 @@ let fbImageCollection = [];
 let twitterImageCollection = [];
 let fbImgId = [];
 let twImgId = [];
+let campaignsArray =[];
 let componentConfig = {
         iconFiletypes: ['.jpg', '.png', '.gif'],
         showFiletypeIcon: false,
@@ -90,7 +91,12 @@ export default class AddReport extends Component {
             twitterReach: '',
             facebookReach: '',
             budget: '',
-            cpcMax: ''
+            cpcMax: '',
+
+            detectedCamp: [],
+            names: [],
+
+            finalObject: {}
         }
     }
 
@@ -130,7 +136,7 @@ export default class AddReport extends Component {
             facebookScreen: fbImageCollection,
             twitterScreen: twitterImageCollection,
         });
-    }
+    };
 
     getReport = (callback)=> {
         var query = new Parse.Query('Report');
@@ -164,12 +170,52 @@ export default class AddReport extends Component {
                     return n !== undefined
                 })
             });
+            self.detectCampaign();
             callback(self.state.campaigns);
         });
     };
 
+    // getCampaign = (callback)=> {
+    //     let self = this;
+    //     let query = new Parse.Query('Campaign');
+    //     query.limit(1000);
+    //     query.find().then(function (camp) {
+    //         self.setState({
+    //             campaigns: camp.map(function (item) {
+    //                 if (item.get('ParentCampaign')) {
+    //                     return {
+    //                         id: item.id,
+    //                         parentCamp: item.get('ParentCampaign')
+    //                     }
+    //                 }
+    //             }).filter(function (n) {
+    //                 return n !== undefined
+    //             })
+    //         });
+    //
+    //         self.setState({
+    //             detectedCamp: camp.map(function (item) {
+    //                 return {
+    //                     id: item.id,
+    //                     name: item.get('name'),
+    //                     parent: item.get('ParentCampaign')
+    //                 }
+    //             })
+    //         });
+    //
+    //         self.setState({
+    //             names: camp.map(function (item) {
+    //                 return item.get('name');
+    //             })
+    //         });
+    //         callback(self.state.campaigns);
+    //     });
+    // };
+
     handleChange = (event, index, value) => {
+
         for (let i = 0; i < clickedCampArray.length; i++) {
+
             if (clickedCampArray[i] === value) {
                 this.setState({
                     open: true
@@ -177,10 +223,17 @@ export default class AddReport extends Component {
                 return;
             }
         }
+
+
+        value.map(function(item){
+            campaignsArray.push(item);
+            return item;
+        });
+
         clickedCampArray.push(value);
         this.setState({
             value: value,
-            chosenCampaign: clickedCampArray,
+            chosenCampaign: campaignsArray,
             chosenList: 'Your campaigns'
         });
 
@@ -192,17 +245,34 @@ export default class AddReport extends Component {
 
     };
 
+    // dropDownMenuItems = ()=> {
+    //     if (this.state.campaigns.length === 0) {
+    //         return null;
+    //     }
+    //     let row = [];
+    //     for (let i = 0; i < this.state.campaigns.length; i++) {
+    //         row.push(
+    //             <MenuItem key={this.state.campaigns[i].id} label=' ' value={this.state.campaigns[i].id}
+    //                       primaryText={this.state.campaigns[i].parentCamp}/>
+    //         );
+    //     }
+    //     return row;
+    // };
+
     dropDownMenuItems = ()=> {
-        if (this.state.campaigns.length === 0) {
-            return null;
-        }
+        if (this.state.finalObject == null) return;
         let row = [];
-        for (let i = 0; i < this.state.campaigns.length; i++) {
-            row.push(
-                <MenuItem key={this.state.campaigns[i].id} label=' ' value={this.state.campaigns[i].id}
-                          primaryText={this.state.campaigns[i].parentCamp}/>
-            );
+        for (var property in this.state.finalObject) {
+            if (this.state.finalObject.hasOwnProperty(property)) {
+                // console.log('p',property);
+                // console.log('length value',this.state.finalObject[property].length);
+                row.push(
+                    <MenuItem key={property} label=' ' value={this.state.finalObject[property]}
+                              primaryText={property}/>
+                );
+            }
         }
+
         return row;
     };
 
@@ -252,8 +322,8 @@ export default class AddReport extends Component {
     handleAddReport = ()=> {
         if (this.state.chosenCampaign.length === 0 || this.state.reportTitle.length === 0
             || this.state.customerName.length === 0 || this.state.startDate === 0 || this.state.endDate.length === 0
-        || this.state.cpcMax.length === 0 || this.state.budget.length === 0 || this.state.twitterReach.length === 0
-        || this.state.facebookReach.length === 0) {
+            || this.state.cpcMax.length === 0 || this.state.budget.length === 0 || this.state.twitterReach.length === 0
+            || this.state.facebookReach.length === 0) {
             this.setState({
                 open: true,
                 duplicateCampaign: 'Some fields are empty! Please check and try again.',
@@ -357,7 +427,7 @@ export default class AddReport extends Component {
         let fileName = '____logo.png';
 
         let file;
-        if(this.state.file.length === 0) {
+        if (this.state.file.length === 0) {
             file = new File([this.state.editLogo], fileName, {type: 'image/jpeg'});
         } else {
             file = this.state.file
@@ -435,7 +505,32 @@ export default class AddReport extends Component {
         });
     };
 
+    detectCampaign = ()=> {
+        let myStruct = {};
+        for (let i = 0; i < this.state.campaigns.length; i++) {
+            let obj = this.state.campaigns[i];
+            let key = obj.parentCamp;
+            let campaignId = obj.id;
+            if (myStruct[key]) {
+                let array = myStruct[key];
+                array.push(campaignId);
+            }
+            else {
+                let array = [];
+                array.push(campaignId);
+                myStruct[key] = array;
+            }
+        }
+        this.setState({
+            finalObject: myStruct
+        });
+        console.log('my struct', myStruct);
+    };
+
     render() {
+
+        console.log('chosen campaigns', this.state.chosenCampaign);
+
         const actions = [
             <FlatButton
                 label="Ok"
