@@ -200,7 +200,6 @@ export default class AddReport extends Component {
         let row = [];
         for (var property in this.state.finalObject) {
             if (this.state.finalObject.hasOwnProperty(property)) {
-                // console.log('p',property);
                 // console.log('length value',this.state.finalObject[property].length);
                 row.push(
                     <MenuItem key={property} label=' ' value={this.state.finalObject[property]}
