@@ -14,7 +14,7 @@ let fbImageCollection = [];
 let twitterImageCollection = [];
 let fbImgId = [];
 let twImgId = [];
-let campaignsArray =[];
+let campaignsArray = [];
 let componentConfig = {
         iconFiletypes: ['.jpg', '.png', '.gif'],
         showFiletypeIcon: false,
@@ -41,13 +41,6 @@ let componentConfig = {
 const customContentStyle = {
     width: '50%',
     maxWidth: 'none',
-};
-
-const BOOTSTRAP_CLASSES = {
-    filter: 'form-control',
-    select: 'form-control',
-    button: 'btn btn btn-block btn-default',
-    buttonActive: 'btn btn btn-block btn-primary'
 };
 
 export default class AddReport extends Component {
@@ -92,9 +85,6 @@ export default class AddReport extends Component {
             facebookReach: '',
             budget: '',
             cpcMax: '',
-
-            detectedCamp: [],
-            names: [],
 
             finalObject: {}
         }
@@ -175,47 +165,8 @@ export default class AddReport extends Component {
         });
     };
 
-    // getCampaign = (callback)=> {
-    //     let self = this;
-    //     let query = new Parse.Query('Campaign');
-    //     query.limit(1000);
-    //     query.find().then(function (camp) {
-    //         self.setState({
-    //             campaigns: camp.map(function (item) {
-    //                 if (item.get('ParentCampaign')) {
-    //                     return {
-    //                         id: item.id,
-    //                         parentCamp: item.get('ParentCampaign')
-    //                     }
-    //                 }
-    //             }).filter(function (n) {
-    //                 return n !== undefined
-    //             })
-    //         });
-    //
-    //         self.setState({
-    //             detectedCamp: camp.map(function (item) {
-    //                 return {
-    //                     id: item.id,
-    //                     name: item.get('name'),
-    //                     parent: item.get('ParentCampaign')
-    //                 }
-    //             })
-    //         });
-    //
-    //         self.setState({
-    //             names: camp.map(function (item) {
-    //                 return item.get('name');
-    //             })
-    //         });
-    //         callback(self.state.campaigns);
-    //     });
-    // };
-
     handleChange = (event, index, value) => {
-
         for (let i = 0; i < clickedCampArray.length; i++) {
-
             if (clickedCampArray[i] === value) {
                 this.setState({
                     open: true
@@ -223,9 +174,7 @@ export default class AddReport extends Component {
                 return;
             }
         }
-
-
-        value.map(function(item){
+        value.map(function (item) {
             campaignsArray.push(item);
             return item;
         });
@@ -237,30 +186,17 @@ export default class AddReport extends Component {
             chosenList: 'Your campaigns'
         });
 
-        for (let i = 0; i < this.state.campaigns.length; i++) {
-            if (this.state.campaigns[i].id === value) {
-                this.state.newCampaign.push(this.state.campaigns[i].parentCamp);
+        for (let property in this.state.finalObject) {
+            if (this.state.finalObject.hasOwnProperty(property)) {
+                if (this.state.finalObject[property] === value) {
+                    this.state.newCampaign.push(property);
+                }
             }
         }
-
     };
 
-    // dropDownMenuItems = ()=> {
-    //     if (this.state.campaigns.length === 0) {
-    //         return null;
-    //     }
-    //     let row = [];
-    //     for (let i = 0; i < this.state.campaigns.length; i++) {
-    //         row.push(
-    //             <MenuItem key={this.state.campaigns[i].id} label=' ' value={this.state.campaigns[i].id}
-    //                       primaryText={this.state.campaigns[i].parentCamp}/>
-    //         );
-    //     }
-    //     return row;
-    // };
-
     dropDownMenuItems = ()=> {
-        if (this.state.finalObject == null) return;
+        if (this.state.finalObject === null) return;
         let row = [];
         for (var property in this.state.finalObject) {
             if (this.state.finalObject.hasOwnProperty(property)) {
@@ -479,6 +415,7 @@ export default class AddReport extends Component {
 
     pushNewCampaign = ()=> {
         let campaignsCurrent = [];
+
         for (let i = 0; i < this.state.newCampaign.length; i++) {
             campaignsCurrent.push(<p key={i}>{this.state.newCampaign[i]}</p>);
         }
@@ -524,12 +461,9 @@ export default class AddReport extends Component {
         this.setState({
             finalObject: myStruct
         });
-        console.log('my struct', myStruct);
     };
 
     render() {
-
-        console.log('chosen campaigns', this.state.chosenCampaign);
 
         const actions = [
             <FlatButton
