@@ -309,21 +309,21 @@ export default class ViewReport extends Component {
             <div>
                 <div className="co-md-12 after-click-row">
                     <LineChart chartSeries={chartSeries}
-                                 viewBoxObject={{
-                                     x: 0,
-                                     y: 0,
-                                     width: 500,
-                                     height: 400
-                                 }}
-                                 title="Line Chart"
-                                 yAxisLabel="Altitude"
-                                 xAxisLabel="Elapsed Time (sec)"
-                                 width={1330} height={300}
-                                 data={dataForChart}
-                                 x={x}
-                                 xScale={xScale}
-                                 xLabel={xLabel}
-                                 yLabel={yLabel}
+                               viewBoxObject={{
+                                   x: 0,
+                                   y: 0,
+                                   width: 500,
+                                   height: 400
+                               }}
+                               title="Line Chart"
+                               yAxisLabel="Altitude"
+                               xAxisLabel="Elapsed Time (sec)"
+                               width={1330} height={300}
+                               data={dataForChart}
+                               x={x}
+                               xScale={xScale}
+                               xLabel={xLabel}
+                               yLabel={yLabel}
                     />
                 </div>
             </div>
@@ -380,12 +380,12 @@ export default class ViewReport extends Component {
             <div>
                 <div className="co-md-12 after-click-row">
                     <LineChart chartSeries={chartSeries}
-                                 width={1330} height={300}
-                                 data={twitterDataForChart}
-                                 x={x}
-                                 xScale={xScale}
-                                 xLabel={xLabel}
-                                 yLabel={yLabel}
+                               width={1330} height={300}
+                               data={twitterDataForChart}
+                               x={x}
+                               xScale={xScale}
+                               xLabel={xLabel}
+                               yLabel={yLabel}
                     />
                 </div>
             </div>
@@ -442,20 +442,20 @@ export default class ViewReport extends Component {
             <div>
                 <div className="co-md-12 after-click-row">
                     <LineChart chartSeries={chartSeries}
-                                 width={1330} height={300}
-                                 data={facebookDataForChart}
-                                 x={x}
-                                 xScale={xScale}
-                                 xLabel={xLabel}
-                                 yLabel={yLabel}
+                               width={1330} height={300}
+                               data={facebookDataForChart}
+                               x={x}
+                               xScale={xScale}
+                               xLabel={xLabel}
+                               yLabel={yLabel}
                     />
                 </div>
             </div>
         )
     };
 
-    seeFacebookScreen=()=>{
-        if(this.state.showFacebook) {
+    seeFacebookScreen = ()=> {
+        if (this.state.showFacebook) {
             this.setState({
                 showFacebook: false,
                 showTwitter: true
@@ -463,8 +463,8 @@ export default class ViewReport extends Component {
         }
     };
 
-    seeTwitterScreen=()=>{
-        if(this.state.showTwitter) {
+    seeTwitterScreen = ()=> {
+        if (this.state.showTwitter) {
             this.setState({
                 showTwitter: false,
                 showFacebook: true
@@ -472,8 +472,8 @@ export default class ViewReport extends Component {
         }
     };
 
-    seeAllScreen=()=>{
-        if(this.state.allScreens) {
+    seeAllScreen = ()=> {
+        if (this.state.allScreens) {
             this.setState({
                 showTwitter: true,
                 showFacebook: true
@@ -533,22 +533,33 @@ export default class ViewReport extends Component {
                             <thead>
                             <tr>
                                 <th className="text-center  pad-td reach-color">
-                                    <div className="reach">{this.uniqueUsers(this.state.uniqueUser)}</div><div className="weight">Unique Users</div>
+                                    <div className="reach">{this.uniqueUsers(this.state.uniqueUser)}</div>
+                                    <div className="weight">Unique Users</div>
                                 </th>
                                 <th className="text-center  pad-td reach-color">
-                                    <div className="reach">{this.state.validatedClick.length}</div><div className="weight">Clicks</div>
+                                    <div className="reach">{this.state.validatedClick.length}</div>
+                                    <div className="weight">Clicks</div>
                                 </th>
                                 <th className="text-center  pad-td reach-color">
-                                    <div className="reach">{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</div><div className="weight">Total reach</div>
+                                    <div
+                                        className="reach">{parseInt(this.state.twitterReach) + parseInt(this.state.facebookReach)}</div>
+                                    <div className="weight">Total reach</div>
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td className="pad-td main-color">{this.state.budget}
-                                <span className="glyphicon glyphicon-eur">&nbsp;</span><div>Budget</div></td>
-                                <td className="pad-td main-color">{this.state.cpcMax} <span className="glyphicon glyphicon-eur">&nbsp;</span><div>Maximum cost per click</div></td>
-                                <td className="pad-td main-color">{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}<div>Expected clicks</div></td>
+                                    <span className="glyphicon glyphicon-eur">&nbsp;</span>
+                                    <div>Budget</div>
+                                </td>
+                                <td className="pad-td main-color">{this.state.cpcMax} <span
+                                    className="glyphicon glyphicon-eur">&nbsp;</span>
+                                    <div>Maximum cost per click</div>
+                                </td>
+                                <td className="pad-td main-color">{(parseInt(this.state.budget) / (Math.round(this.state.cpcMax * 100) / 100)).toFixed(0)}
+                                    <div>Expected clicks</div>
+                                </td>
                             </tr>
                             <tr>
                                 <td className="pad-td main-color">&nbsp;</td>
@@ -557,7 +568,9 @@ export default class ViewReport extends Component {
                                     <span className="glyphicon glyphicon-eur">&nbsp;</span>
                                     <div>Real cost per click</div>
                                 </td>
-                                <td className="pad-td main-color">{this.state.validatedClick.length}<div>Validated clicks</div></td>
+                                <td className="pad-td main-color">{this.state.validatedClick.length}
+                                    <div>Validated clicks</div>
+                                </td>
                             </tr>
                             <tr>
                                 <td className="pad-td main-color">&nbsp;</td>
@@ -602,7 +615,7 @@ export default class ViewReport extends Component {
                             Posts
                         </div>
                         <div className="col-md-1 text-center">
-                           <span className="gray" onClick={this.seeAllScreen}>All</span>
+                            <span className="gray" onClick={this.seeAllScreen}>All</span>
                         </div>
                         <div className="col-md-1">
                             <span className="gray" onClick={this.seeTwitterScreen}>Facebook</span>
@@ -636,8 +649,7 @@ export default class ViewReport extends Component {
                             </div>
                             {this.displayScreen(this.state.twitterId)}
                         </div> : null}
-
-                       <hr/>
+                    <hr/>
                     <footer>
                     </footer>
                 </div>
