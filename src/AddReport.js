@@ -403,6 +403,9 @@ export default class AddReport extends Component {
             report.set('campaign', this.state.chosenCampaign.map(function (camp) {
                 return {"__type": "Pointer", "className": "Campaign", "objectId": camp}
             }));
+            report.set('participants', this.state.selectedRows.map(function (row) {
+                return {"__type": "Pointer", "className": "Campaign", "objectId": row.id}
+            }));
             report.set('token', token);
             report.set('budget', this.state.budget);
             report.set('reachTwitter', this.state.twitterReach);
@@ -503,6 +506,9 @@ export default class AddReport extends Component {
                     report.set('endDate', self.state.endDate);
                     report.set('campaign', self.state.chosenCampaign.map(function (camp) {
                         return {"__type": "Pointer", "className": "Campaign", "objectId": camp}
+                    }));
+                    report.set('participants', self.state.selectedRows.map(function (row) {
+                        return {"__type": "Pointer", "className": "Campaign", "objectId": row.id}
                     }));
                     report.set('budget', self.state.budget);
                     report.set('reachTwitter', self.state.twitterReach);
@@ -622,8 +628,6 @@ export default class AddReport extends Component {
     };
 
     render() {
-
-        console.log('selected rows',this.state.selectedRows);
         const actions = [
             <FlatButton
                 label="Ok"
