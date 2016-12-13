@@ -11,7 +11,7 @@ export default class LogIn extends Component {
             userState: 'Login',
             open: false,
             password: '',
-            login: 'sasha',
+            login: 'Admin',
             dialogTitle: 'Type your password'
         };
     }

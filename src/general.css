@@ -400,3 +400,15 @@ div.filepicker {
     align-items: center;
     font-size: 15px;
 }
+
+.participants {
+    position: relative;
+    top: 33px;
+    z-index: 1;
+    left: -29%;
+}
+
+.participant-title {
+    position: relative;
+    bottom: 16px;
+}

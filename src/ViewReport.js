@@ -1,32 +1,9 @@
 import React, {Component} from 'react';
 let Parse = require('parse').Parse;
 import {LineChart} from 'react-d3-basic';
-import Toggle from 'material-ui/Toggle';
+
 let LineTooltip = require('react-d3-tooltip').LineTooltip;
 let clickGraphDetect;
-const styles = {
-    block: {
-        maxWidth: 250,
-    },
-    toggle: {
-        marginBottom: 16,
-    },
-    thumbOff: {
-        backgroundColor: '#ffcccc',
-    },
-    trackOff: {
-        backgroundColor: '#ff9d9d',
-    },
-    thumbSwitched: {
-        backgroundColor: '#d43346',
-    },
-    trackSwitched: {
-        backgroundColor: '#ff9d9d',
-    },
-    labelStyle: {
-        color: 'rgb(114,105,106)'
-    }
-};
 
 export default class ViewReport extends Component {
     constructor(props) {
@@ -56,7 +33,7 @@ export default class ViewReport extends Component {
             clicks: 'all',
             showFacebook: true,
             showTwitter: true,
-            allScreens: true
+            allScreens: true,
         }
     }
 
@@ -148,6 +125,7 @@ export default class ViewReport extends Component {
             return pointer
         });
         query.count().then(function (number) {
+
             query.limit(1000);
             query.skip(0);
             query.containedIn('campaign', pointer);

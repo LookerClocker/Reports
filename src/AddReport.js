@@ -8,6 +8,11 @@ import '../node_modules/dropzone/dist/min/dropzone.min.css'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import ReportConfirm from './SuccessDialog';
+import ReactDataGrid from 'react-data-grid';
+import {Toolbar, Data, Filters} from 'react-data-grid/addons';
+import {SimpleCheckboxEditor, SimpleCheckboxFormatter} from 'react-data-grid/dist/react-data-grid.ui-plugins'
+
+let Selectors = Data.Selectors;
 let Parse = require('parse').Parse;
 let clickedCampArray = [];
 let fbImageCollection = [];
@@ -15,6 +20,7 @@ let twitterImageCollection = [];
 let fbImgId = [];
 let twImgId = [];
 let campaignsArray = [];
+let memberId = [];
 let componentConfig = {
         iconFiletypes: ['.jpg', '.png', '.gif'],
         showFiletypeIcon: false,
@@ -42,6 +48,22 @@ const customContentStyle = {
     width: '50%',
     maxWidth: 'none',
 };
+
+
+let columns = [
+    {
+        key: 'firstName',
+        name: 'First name',
+        sortable: true,
+        filterable: true
+    },
+    {
+        key: 'lastName',
+        name: 'Last name',
+        sortable: true,
+        filterable: true
+    }
+];
 
 export default class AddReport extends Component {
     constructor(props) {
@@ -86,7 +108,18 @@ export default class AddReport extends Component {
             budget: '',
             cpcMax: '',
 
-            finalObject: {}
+            finalObject: {},
+            users:[],
+            selectedUsers:[],
+
+            members:[],
+            participant:[],
+
+            filters: {},
+            sortColumn: null,
+            sortDirection: null,
+            rows: [],
+            selectedRows:[]
         }
     }
 
@@ -147,25 +180,70 @@ export default class AddReport extends Component {
         let self = this;
         let query = new Parse.Query('Campaign');
         query.limit(1000);
+        query.include('group');
         query.find().then(function (camp) {
             self.setState({
                 campaigns: camp.map(function (item) {
                     if (item.get('ParentCampaign')) {
                         return {
                             id: item.id,
-                            parentCamp: item.get('ParentCampaign')
+                            parentCamp: item.get('ParentCampaign'),
+                            group: item.get('group').get('members')
                         }
                     }
                 }).filter(function (n) {
                     return n !== undefined
-                })
+                }),
+
+                members: camp.map(function (item) {
+                    if (item.get('ParentCampaign')) {
+                        return {
+                            id: item.id,
+                            parentCamp: item.get('ParentCampaign'),
+                            group: item.get('group').get('members')
+                        }
+                    }
+                }).filter(function (n) {
+                    return n !== undefined
+                }),
             });
             self.detectCampaign();
             callback(self.state.campaigns);
         });
     };
 
+    getMembers=(callback)=>{
+        let self = this;
+        let query = new Parse.Query('Member');
+
+        query.count().then(function (number) {
+            query.limit(1000);
+            query.skip(0);
+            query.containedIn('objectId', self.state.participant);
+            query.equalTo('blackListStatus', false);
+            query.addAscending('createdAt');
+
+            var allObj = [];
+
+            for (var i = 0; i <= number; i += 1000) {
+                query.skip(i);
+                query.find().then(function (members) {
+                    allObj = allObj.concat(members.map(function(member){
+                        return {
+                            id: member.id,
+                            firstName: member.get('firstName'),
+                            lastName: member.get('lastName')
+                        }
+                    }));
+                    callback(allObj);
+                });
+            }
+        });
+    };
+
     handleChange = (event, index, value) => {
+        let self = this;
+
         for (let i = 0; i < clickedCampArray.length; i++) {
             if (clickedCampArray[i] === value) {
                 this.setState({
@@ -174,12 +252,14 @@ export default class AddReport extends Component {
                 return;
             }
         }
+
         value.map(function (item) {
             campaignsArray.push(item);
             return item;
         });
 
         clickedCampArray.push(value);
+
         this.setState({
             value: value,
             chosenCampaign: campaignsArray,
@@ -193,6 +273,38 @@ export default class AddReport extends Component {
                 }
             }
         }
+
+        for(let i=0; i < campaignsArray.length; i++){
+            for(let k=0; k < this.state.members.length; k++){
+                if(campaignsArray[i] === this.state.members[k].id){
+                    let data = this.state.members[k].group.map(function(member){
+                        return member.id;
+                    });
+                    memberId.push(data);
+                    this.state.members.splice(k,1);
+                }
+            }
+        }
+
+        let data;
+        let finalArray=[];
+
+        for(let i=0; i < memberId.length; i++){
+            data = memberId[i].map(function(id){return id});
+            finalArray = finalArray.concat(data);
+        }
+
+        this.setState({
+            participant: finalArray
+        });
+
+
+        this.getMembers(function (items) {
+            self.setState({
+                users: items,
+                rows: items
+            });
+        });
     };
 
     dropDownMenuItems = ()=> {
@@ -462,8 +574,56 @@ export default class AddReport extends Component {
         });
     };
 
+    // REACT DATA GRID BUILD-IN METHODS
+    getRows = ()=> {
+        return Selectors.getRows(this.state);
+    };
+
+    getSize = () => {
+        return this.getRows().length;
+    };
+
+    rowGetter = (rowIdx)=> {
+        var rows = this.getRows();
+        return rows[rowIdx];
+    };
+
+    handleGridSort = (sortColumn, sortDirection)=> {
+        let state = Object.assign({}, this.state, {sortColumn: sortColumn, sortDirection: sortDirection});
+        this.setState(state);
+    };
+
+    handleFilterChange = (filter)=> {
+        let newFilters = Object.assign({}, this.state.filters);
+        if (filter.filterTerm) {
+            newFilters[filter.column.key] = filter;
+        } else {
+            delete newFilters[filter.column.key];
+        }
+        this.setState({filters: newFilters});
+    };
+
+    onClearFilters = () => {
+        this.setState({filters: {}});
+    };
+
+    onRowSelect=(rows)=> {
+        this.setState({selectedRows: rows});
+    };
+
+    onCellSelected=(coordinates)=> {
+        this.refs.grid.openCellEditor(coordinates.rowIdx, coordinates.idx);
+    };
+
+    onCellDeSelected=(coordinates)=> {
+        if (coordinates.idx === 2) {
+            alert('the editor for cell (' + coordinates.rowIdx + ',' + coordinates.idx + ') should have just closed');
+        }
+    };
+
     render() {
 
+        console.log('selected rows',this.state.selectedRows);
         const actions = [
             <FlatButton
                 label="Ok"
@@ -474,7 +634,6 @@ export default class AddReport extends Component {
 
         if (this.props.params.id) {
             var startDate, endDate, editLogoBlock;
-            // var displayCampaigns = 'Your old campaigns';
             (this.state.editStartDate) ? startDate = (
                 <input className="edit-input" type="text" value={this.state.editStartDate}/>) : '';
             (this.state.editEndDate) ? endDate = (
@@ -492,6 +651,35 @@ export default class AddReport extends Component {
         if (this.state.sentReport) {
             var reportConfirm = <ReportConfirm message={this.state.message}/>
         }
+
+        var grid;
+
+        this.state.participant.length != 0 ?
+            grid = (<div className="row networks-row">
+                <div className="col-md-2 col-md-offset-1">
+                    <strong className="participant-title">Participants</strong>
+                    <strong className="participants">Total participants: {this.getSize()}</strong>
+                </div>
+
+                <div className="col-md-offset-1 col-md-10">
+                    <ReactDataGrid
+                        idProperty='id'
+                        enableRowSelect='multi'
+                        onGridSort={this.handleGridSort}
+                        columns={columns}
+                        rowGetter={this.rowGetter}
+                        rowsCount={this.getSize()}
+                        minHeight={300}
+                        toolbar={<Toolbar enableFilter={true}/>}
+                        onAddFilter={this.handleFilterChange}
+                        onClearFilters={this.onClearFilters}
+
+                        onRowSelect={this.onRowSelect}
+                        enableCellSelect={true}
+                        onCellSelected={this.onCellSelected}
+                        onCellDeSelected={this.onCellDeSelected}/>
+                </div>
+            </div>) : '';
 
         return (
             <div className="main-padding main-margin">
@@ -578,10 +766,6 @@ export default class AddReport extends Component {
                             </div>
                         </div>
                     </div>
-                    {/*<div className="col-md-3 text-center">*/}
-                    {/*<input className="custom-file-input btn btn-default logo-width" type="file"*/}
-                    {/*onChange={this.handleImageChange}/>*/}
-                    {/*</div>*/}
                     <div className="col-md-6">
                         <div className="row networks-row">
                             <div className="col-md-2">
@@ -649,7 +833,7 @@ export default class AddReport extends Component {
                         </DropDownMenu>
                     </div>
                 </div>
-
+                {grid}
                 <div className="row networks-row">
                     <div className="col-md-offset-1 col-md-2 networks-title"><strong>Facebook`s screenshots</strong>
                     </div>
