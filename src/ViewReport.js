@@ -3,6 +3,7 @@ let Parse = require('parse').Parse;
 import {LineChart} from 'react-d3-basic';
 
 let LineTooltip = require('react-d3-tooltip').LineTooltip;
+
 let clickGraphDetect;
 
 export default class ViewReport extends Component {
@@ -34,6 +35,9 @@ export default class ViewReport extends Component {
             showFacebook: true,
             showTwitter: true,
             allScreens: true,
+            participant: [],
+            participantsInfo: []
+
         }
     }
 
@@ -62,7 +66,10 @@ export default class ViewReport extends Component {
                     twitterReach: item.get('reachTwitter') ? item.get('reachTwitter') : '',
                     facebookReach: item.get('reachTwitter') ? item.get('reachFacebook') : '',
                     budget: item.get('reachTwitter') ? item.get('budget') : '',
-                    cpcMax: item.get('reachTwitter') ? item.get('cpcMax') : ''
+                    cpcMax: item.get('reachTwitter') ? item.get('cpcMax') : '',
+                    participant: item.get('participants') ? item.get('participants').map(function (participant) {
+                        return participant.id;
+                    }) : ''
                 });
             });
 
@@ -111,7 +118,24 @@ export default class ViewReport extends Component {
                     })
 
                 });
+
+                if (self.state.clicks == 'all') {
+                    clickGraphDetect = self.clickGraph();
+                }
+                else if (self.state.clicks == 'twitter') {
+                    clickGraphDetect = self.twitterClickGraph();
+                }
+                else if (self.state.clicks == 'facebook') {
+                    clickGraphDetect = self.facebookClickGraph();
+                }
             });
+
+            self.getMembers(function (item) {
+                self.setState({
+                    participantsInfo: self.fullFillMembers(item)
+                })
+            });
+
         });
     };
 
@@ -151,6 +175,30 @@ export default class ViewReport extends Component {
         });
     };
 
+    getMembers(callback) {
+        let self = this;
+        let query = new Parse.Query('Member');
+
+        query.count().then(function (number) {
+
+            query.limit(1000);
+            query.skip(0);
+            query.containedIn('objectId', self.state.participant);
+            query.addAscending('createdAt');
+
+            var allObj = [];
+
+            for (var i = 0; i <= number; i += 1000) {
+                query.skip(i);
+                query.find().then(function (member) {
+                    allObj = allObj.concat(member);
+
+                    callback(allObj);
+                });
+            }
+        });
+    };
+
     fullFill = (object)=> {
         return object.map(function (elem) {
             return {
@@ -158,6 +206,20 @@ export default class ViewReport extends Component {
                 userId: elem.get('userId'),
                 provider: elem.get('provider'),
                 timestamp: elem.get('timestamp').toISOString().substring(0, 10),
+            }
+        })
+    };
+
+    fullFillMembers = (object)=> {
+        return object.map(function (elem) {
+            return {
+                id: elem.id,
+                firstName: elem.get('firstName') ? elem.get('firstName') : '',
+                lastName: elem.get('lastName') ? elem.get('lastName') : '',
+                email: elem.get('email') ? elem.get('email') : '',
+                country: elem.get('country') ? elem.get('country') : '',
+                userInterest: elem.get('userInterests') ? elem.get('userInterests') : '',
+                website: elem.get('website') ? elem.get('website') : ''
             }
         })
     };
@@ -248,6 +310,7 @@ export default class ViewReport extends Component {
         let dataForChart = [];
 
         if (this.state.days.length == 0) return null;
+        this.state.days.sort();
         this.state.days.forEach(function (x) {
             counts[x] = (counts[x] || 0) + 1;
         });
@@ -259,7 +322,7 @@ export default class ViewReport extends Component {
                     day: new Date(date[0], date[1], date[2]),
                     clicks: value
                 }
-            )
+            );
         }
 
         let x = function (d) {
@@ -282,7 +345,6 @@ export default class ViewReport extends Component {
                 }
             }
         ];
-
         return (
             <div>
                 <div className="co-md-12 after-click-row">
@@ -318,6 +380,7 @@ export default class ViewReport extends Component {
             return days.timestamp;
         });
 
+        twDays.sort();
         twDays.forEach(function (x) {
             twCounts[x] = (twCounts[x] || 0) + 1;
         });
@@ -331,7 +394,6 @@ export default class ViewReport extends Component {
                 }
             )
         }
-
 
         let x = function (d) {
                 return d.day;
@@ -374,12 +436,14 @@ export default class ViewReport extends Component {
         let fbCounts = {};
         let facebookDataForChart = [];
 
+        this.state.days.sort();
         if (this.state.days.length == 0) return null;
 
         let fbDays = this.state.fbClicks.map(function (days) {
             return days.timestamp;
         });
 
+        fbDays.sort();
         fbDays.forEach(function (x) {
             fbCounts[x] = (fbCounts[x] || 0) + 1;
         });
@@ -459,17 +523,26 @@ export default class ViewReport extends Component {
         }
     };
 
-    render() {
-        if (this.state.clicks == 'all') {
-            clickGraphDetect = this.clickGraph();
-        }
-        else if (this.state.clicks == 'twitter') {
-            clickGraphDetect = this.twitterClickGraph();
-        }
-        else if (this.state.clicks == 'facebook') {
-            clickGraphDetect = this.facebookClickGraph();
+    displayParticipant = ()=> {
+        if (this.state.participantsInfo.length === 0) return null;
+        let row = [];
+        for (let i = 0; i < this.state.participantsInfo.length; i++) {
+            let participant = this.state.participantsInfo[i];
+            row.push(
+                <tbody>
+                <tr>
+                    <td>
+                        {participant.firstName + ' ' + participant.lastName}
+                    </td>
+                </tr>
+                </tbody>
+            )
         }
 
+        return row;
+    };
+
+    render() {
         return (
             <div>
                 <div className="container">
@@ -588,6 +661,20 @@ export default class ViewReport extends Component {
 
                         {clickGraphDetect}
                     </div>
+                    {/*<div className="row posts margin-participant">*/}
+                        {/*<div className="col-md-12 timeline">*/}
+                            {/*Participants*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+                    {/*<div className="row posts margin-row-participant">*/}
+                        {/*<div className="col-md-12">*/}
+                            {/*<div className="table-responsive">*/}
+                                {/*<table className="table">*/}
+                                    {/*{this.displayParticipant()}*/}
+                                {/*</table>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
                     <div className="row posts">
                         <div className="col-md-2 timeline">
                             Posts

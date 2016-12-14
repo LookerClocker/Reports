@@ -187,8 +187,7 @@ export default class AddReport extends Component {
                     if (item.get('ParentCampaign')) {
                         return {
                             id: item.id,
-                            parentCamp: item.get('ParentCampaign'),
-                            group: item.get('group').get('members')
+                            parentCamp: item.get('ParentCampaign')
                         }
                     }
                 }).filter(function (n) {
@@ -578,6 +577,7 @@ export default class AddReport extends Component {
         this.setState({
             finalObject: myStruct
         });
+
     };
 
     // REACT DATA GRID BUILD-IN METHODS

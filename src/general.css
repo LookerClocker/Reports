@@ -412,3 +412,11 @@ div.filepicker {
     position: relative;
     bottom: 16px;
 }
+
+.margin-participant {
+    margin-bottom: 3%;
+}
+
+.margin-row-participant {
+    margin-bottom: 4%;
+}
