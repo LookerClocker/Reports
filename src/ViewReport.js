@@ -528,14 +528,33 @@ export default class ViewReport extends Component {
         let row = [];
         for (let i = 0; i < this.state.participantsInfo.length; i++) {
             let participant = this.state.participantsInfo[i];
+            let country='';
+            if(participant.country == 'FR') {
+                country = 'France'
+            }
+            else {
+                country = participant.country;
+            }
             row.push(
-                <tbody>
                 <tr>
                     <td>
-                        {participant.firstName + ' ' + participant.lastName}
+                        <div>{participant.firstName + ' ' + participant.lastName}</div>
+                        <div className="email-participant"></div>
+                    </td>
+                    <td>
+                        {participant.email.map(function(e){
+                            return (<div> {e} </div>);
+                        })}
+                    </td>
+                    <td>
+                        {participant.userInterest.map(function (i) {
+                            return ' #' + i
+                        })}
+                    </td>
+                    <td>
+                        {country}
                     </td>
                 </tr>
-                </tbody>
             )
         }
 
@@ -658,23 +677,32 @@ export default class ViewReport extends Component {
                             <div className="col-md-2"><span className="twAndfb" onClick={this.setTwitterClicks}>Twitter clicks</span>
                             </div>
                         </div>
-
                         {clickGraphDetect}
                     </div>
-                    {/*<div className="row posts margin-participant">*/}
-                        {/*<div className="col-md-12 timeline">*/}
-                            {/*Participants*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-                    {/*<div className="row posts margin-row-participant">*/}
-                        {/*<div className="col-md-12">*/}
-                            {/*<div className="table-responsive">*/}
-                                {/*<table className="table">*/}
-                                    {/*{this.displayParticipant()}*/}
-                                {/*</table>*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
+                    <div className="row posts margin-participant">
+                        <div className="col-md-12 timeline">
+                            Participants
+                        </div>
+                    </div>
+                    <div className="row posts margin-row-participant">
+                        <div className="col-md-12">
+                            <div className="table-responsive">
+                                <table className="table">
+                                    <thead className="participant-thead">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Emails</th>
+                                        <th>Interests</th>
+                                        <th>Country</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="participant">
+                                    {this.displayParticipant()}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <div className="row posts">
                         <div className="col-md-2 timeline">
                             Posts
