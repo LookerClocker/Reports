@@ -37,7 +37,6 @@ export default class ViewReport extends Component {
             allScreens: true,
             participant: [],
             participantsInfo: []
-
         }
     }
 
@@ -119,13 +118,13 @@ export default class ViewReport extends Component {
 
                 });
 
-                if (self.state.clicks == 'all') {
+                if (self.state.clicks === 'all') {
                     clickGraphDetect = self.clickGraph();
                 }
-                else if (self.state.clicks == 'twitter') {
+                else if (self.state.clicks === 'twitter') {
                     clickGraphDetect = self.twitterClickGraph();
                 }
-                else if (self.state.clicks == 'facebook') {
+                else if (self.state.clicks === 'facebook') {
                     clickGraphDetect = self.facebookClickGraph();
                 }
             });
@@ -259,11 +258,11 @@ export default class ViewReport extends Component {
     };
 
     displayScreen = (array)=> {
-        if (array.length == 0 || this.state.allScreen.length == 0) return;
+        if (array.length === 0 || this.state.allScreen.length === 0) return;
         let screens = [];
         for (let i = 0; i < array.length; i++) {
             for (let j = 0; j < this.state.allScreen.length; j++) {
-                if (this.state.allScreen[j].id == array[i]) {
+                if (this.state.allScreen[j].id === array[i]) {
                     screens.push(
                         <div className="col-sm-4 col-xs-6 networks-title">
                             <img className="img-responsive portfolio-item" src={this.state.allScreen[j].image} alt=""/>
@@ -309,7 +308,7 @@ export default class ViewReport extends Component {
         let counts = {};
         let dataForChart = [];
 
-        if (this.state.days.length == 0) return null;
+        if (this.state.days.length === 0) return null;
         this.state.days.sort();
         this.state.days.forEach(function (x) {
             counts[x] = (counts[x] || 0) + 1;
@@ -374,7 +373,7 @@ export default class ViewReport extends Component {
         let twCounts = {};
         let twitterDataForChart = [];
 
-        if (this.state.days.length == 0) return null;
+        if (this.state.days.length === 0) return null;
 
         let twDays = this.state.twClicks.map(function (days) {
             return days.timestamp;
@@ -437,7 +436,7 @@ export default class ViewReport extends Component {
         let facebookDataForChart = [];
 
         this.state.days.sort();
-        if (this.state.days.length == 0) return null;
+        if (this.state.days.length === 0) return null;
 
         let fbDays = this.state.fbClicks.map(function (days) {
             return days.timestamp;
@@ -457,7 +456,6 @@ export default class ViewReport extends Component {
                 }
             )
         }
-
 
         let x = function (d) {
                 return d.day;
@@ -529,7 +527,7 @@ export default class ViewReport extends Component {
         for (let i = 0; i < this.state.participantsInfo.length; i++) {
             let participant = this.state.participantsInfo[i];
             let country='';
-            if(participant.country == 'FR') {
+            if(participant.country === 'FR') {
                 country = 'France'
             }
             else {
@@ -547,9 +545,11 @@ export default class ViewReport extends Component {
                         })}
                     </td>
                     <td>
-                        {participant.userInterest.map(function (i) {
+                        <div>{participant.userInterest.map(function (i) {
                             return ' #' + i
                         })}
+                        </div>
+                        <div><a href="#">{participant.website}</a></div>
                     </td>
                     <td>
                         {country}

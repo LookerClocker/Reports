@@ -423,6 +423,7 @@ div.filepicker {
 
 #participant td {
     padding: 2% 0 2% 0;
+    width: 30%;
 }
 
 .email-participant {
