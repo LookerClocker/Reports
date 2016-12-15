@@ -2,9 +2,9 @@
     color: #fff;
 }
 
-/*html {*/
-    /*overflow-y: hidden;*/
-/*}*/
+html {
+    overflow-x: hidden;
+}
 
 .add-butt {
     position: absolute;
